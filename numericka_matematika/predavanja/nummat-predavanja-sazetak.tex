@@ -1,0 +1,358 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[croatian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{lmodern}
+\usepackage{url}
+\usepackage{enumerate}
+\usepackage{booktabs}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{color}
+
+\newcommand{\doccol}{blue}
+
+\title{Numerička matematika}
+\date{}
+
+\begin{document}
+%{\color{\doccol}
+\maketitle
+
+\section{Numerička integracija}
+\begin{description}
+  \item[Simpsonova formula:]
+  \begin{align}
+  S_f(\mathbf{x}) &= \frac{h}{3} \cdot \big [ f(\mathbf{x_0}) + f(\mathbf{x_n}) \nonumber \\
+   &\quad+ 4 \cdot  ( f(\mathbf{x_1}) + f(\mathbf{x_3}) + \cdots + f(\mathbf{x_{n-1}}) ) \nonumber \\
+   &\quad+ 2 \cdot ( f(\mathbf{x_2}) + f(\mathbf{x_4}) + \cdots + f(\mathbf{x_{n-2}}) ) \big ] 
+  \end{align}
+  Ocjena greške:
+  $$E = h^4\|f^{(4)}\|_\infty \dfrac{b-a}{180}$$
+  \item[Trapezna formula:]
+  \begin{equation}
+  T_f(\mathbf{x}) = \frac{h}{2} \cdot \left ( f(\mathbf{x_0}) + 2\sum\limits_{i=1}^{n-1} f(\mathbf{x_i}) + f(\mathbf{x_n}) \right )
+  \end{equation}
+  Ocjena greške:
+  $$E = h^2\|f''\|_\infty \dfrac{b-a}{12}$$
+  \item[Pravokutna formula:]
+  \begin{equation}
+  P_f(\mathbf{x}) = h \sum\limits_{i=0}^{n-1} f \left ( \frac{\mathbf{x_i} + \mathbf{x_{i+1}}}{2} \right )
+  \end{equation}
+  Ocjena greške:
+  $$E = h^2\|f''\|_\infty \dfrac{b-a}{24}$$
+\end{description}
+
+\subsection{Analiza greške}
+Osnovne mjere:
+\begin{description}
+  \item[apsolutna greška:] $$E_{aps} = | \tilde  x - x |,$$
+  \item[relativna greška:] $$R_{rel} = \frac{E_{aps}}{|x|},$$
+\end{description}
+pri čemu je $\tilde x$ iznos dobiven postupkom numeričke integracije, a $x$ vrijednost dobivena analitičkim rješavanjem.
+
+\section{Splineovi}
+Uvjeti koji se moraju zadovoljiti za konstrukciju kubičnog splinea:
+\begin{itemize}
+  \item neprekidnost funkcije: $s(x_i-0)=s(x_i+0)$ za $i=1,2,\ldots, n-1$,
+  \item interpolacija: $s(x_i)=y_i$  za $i=1,2,\ldots, n-1$,
+  \item neprekidnost prve derivacije: $s'(x_i-0)=s'(x_i+0)$ za $i=1,2,\ldots, n-1$,
+  \item neprekidnost druge derivacije: $s''(x_i-0)=s''(x_i+0)$ za $i=1,2,\ldots, n-1$.
+\end{itemize}
+Ponašanje splinea na rubovima zadanog intervala:
+\begin{description}
+  \item[Potpuni spline:] $s'(x_0) = f'(x_0), \quad s'(x_n) = f'(x_n)$.
+  \item[Periodički spline:] $s'(x_0) = s'(x_n), \quad s''(x_0) = s''(x_n)$.
+  \item[Prirodni kubični spline:] $s''(x_0) = s''(x_n) = 0$.
+\end{description}
+
+\section{Metoda najmanjih kvadrata}
+Tražimo $\tilde f(x_i) \approx y_i$. Pretpostavimo oblik te u ovisnosti o koeficijentima tražimo:
+$$E = \sum\limits_{i=0}^n\left (y_i-\tilde f(x_i)\right)^2 \, \rightarrow \, \text{min}.$$
+Ako imamo $E(c_0, c_1, \ldots, c_n)$ tada tražimo: $$\frac{\partial E}{\partial c_i} = 0,\quad i = 0, \ldots, n.$$
+Ako imamo oblik
+$$\tilde f(x) = c_0 + c_1x + \ldots + c_k x^k,$$
+to se može zapisati kao:
+$$\begin{bmatrix}
+y_0\\
+y_1\\
+\vdots \\
+y_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & x_0 & x_0^2 & \cdots & x_0^k\\
+1 & x_1 & x_1^2 & \cdots & x_1^k\\
+\vdots & \vdots & \vdots & \ddots & \vdots\\
+1 & x_n & x_n^2 & \cdots & x_n^k
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+c_0\\
+c_1\\
+\vdots\\
+c_k
+\end{bmatrix}$$
+
+\subsection{Preodređeni sustav}
+Zadan je preodređen sustav kojem je potrebno pronaći približno rješenje. Sustav možemo prikazati u obliku:
+\begin{equation}
+A\mathbf x = \mathbf b,
+\label{eq:osnovni_sus}
+\end{equation}
+pri čemu je $A \in \mathbb R^{m \times n}$, $\mathbf b \in \mathbb R^m$, i $m>n$. Aproksimaciju tražimo metodom najmanjih kvadrata, odnosno tražimo $\mathbf x$ koji minimizira $\| A\mathbf x - \mathbf b\|^2$.
+
+\subsection{Rješenje preko normalnih jednadžbi}
+Normalne jednadžbe:
+\begin{align}
+\|A\mathbf x - b\|_2 \rightarrow \text{min} &\Leftrightarrow \left (A\mathbf x - \mathbf b, A\mathbf y \right ) = 0,\quad \forall\mathbf y \in \mathbb R^k\\
+&\Leftrightarrow \left(A^\top\left(A\mathbf x - \mathbf b\right ), \mathbf y \right ) = 0,\quad \forall\mathbf y \in \mathbb R^k\\
+&\Leftrightarrow A^\top \left ( A \mathbf x - \mathbf b \right ) = 0.
+\label{eq:normalne}
+\end{align}
+Rezultat:
+$$A^\top A\mathbf x = A^\top \mathbf b.$$
+Time dobivamo $n$ jednadžbi sa $n$ nepoznanica, a $A^\top A$ je simetrična pozitivno definitna matrica.
+
+\textsc{Algoritam:}
+\begin{enumerate}[\indent 1)]
+  \item $C = A^\top A$,
+  \item primjeni Cholesky faktorizaciju na $C,\; C = LL^\top$,
+  \item $\mathbf d = A^\top \mathbf b$,
+  \item izračunaj $L\mathbf z = \mathbf d$ korištenjem supstitucije unaprijed,
+  \item izračunaj $L^\top \mathbf x = \mathbf z$ korištenjem suspstitucije unatrag.
+\end{enumerate}
+Složeost postupka: $mn^2 + (1/3)n^3$ operacija.
+
+\textsc{Cholesky faktorizacija:}
+\begin{enumerate}[\indent 1)]
+  \item $l_{1,1} = \sqrt{a_{1,1}}$,
+  \item $l_{j,1} = a_{j,1}/l_{1,1},\quad j = 2, \ldots, n$,
+  \item za $i = 2, \ldots, n-1$:
+  \begin{enumerate}[\indent a)]
+    \item $l_{i,i} = \left (a_{i,i} - \sum\limits_{k=1}^{i-1} l_{i,k}^2\right )^{1/2}$,
+    \item $l_{j,i} = \left (a_{j,i} - \sum\limits_{k=1}^{i-1} l_{j,k}l_{i,k}\right )/l_{i,i},\quad j = i+1, \ldots, n$,
+  \end{enumerate}
+  \item $l_{n,n} = \left ( a_{n,n} - \sum\limits_{k=1}^{n-1} l_{n,k}^2\right ) ^{1/2}$,
+\end{enumerate}
+Rezultat faktorizacije je donja trokutasta matrica $L$.
+
+\subsection{Rješenje $QR$ faktorizacijom}
+Krenimo od normalnih jednadžbi (\ref{eq:normalne}) koristeći $QR$ faktorizaciju $A = QR$:
+\begin{align}
+A^\top A \mathbf x &= A^\top \mathbf b \nonumber \\
+R^\top Q^\top Q R\mathbf x &= R^\top Q^\top\mathbf b  \nonumber \\
+R^\top R\mathbf x &= R^\top Q^\top\mathbf b  \nonumber \\
+ R\mathbf x &= Q^\top\mathbf b\quad (R \text{ nije singularna})\nonumber 
+\end{align}
+$QR$ faktorizacija matrice $A \in \mathbb R^{n \times k}$, $k<n$, je rastav oblika:
+$$A = Q \begin{bmatrix}R\\0\end{bmatrix},$$
+pri čemu je $Q \in \mathbb R^{n \times n}$ ortogonalna, a $R \in \mathbb R^{k\times k}$, gornjetrokutasta matrica.
+
+\textsc{Algoritam:}
+\begin{enumerate}[\indent 1)]
+  \item $QR$ faktorizacija od $A$, $A = QR$,
+  \item $\mathbf d = Q^\top \mathbf b$,
+  \item izračunaj $R \mathbf x = \mathbf d$ korištenjem suspstitucije unatrag.
+\end{enumerate}
+Složenost navedenog postupka za velike $m$ i $n$ iznosi: $2mn^2$ operacija s pomičnim zarezom. 
+
+$QR$ faktorizacijom matricu $A$ rastavljamo na umnožak $QR$ pri čemu je $Q$ ortogonalna matrica (vrijedi: $Q^\top Q = I$), a $R$ gornja trokutasta matrica. Ako matrica $A$ nije singularna, tada je $QR$ faktorizacija jedinstvena.
+
+\textsc{$QR$ faktorizacija:}
+\begin{enumerate}[\indent 1)]
+  \item $\mathbf u_k = \mathbf a_k - (\mathbf a_k \cdot \mathbf e_1)\mathbf e_1 - \cdots - (\mathbf a_k \cdot \mathbf e_{k-1})\mathbf e_{k-1}, \quad k = 1, \ldots, n$,
+  \item $\mathbf e_k = \frac{\mathbf u_k}{\|\mathbf u_k\|}, \quad k = 1, \ldots, n$,
+  \item $Q = \begin{bmatrix} \mathbf e_1 & \mathbf e_2 & \cdots  & \mathbf e_n\end{bmatrix}$,
+  \item $$R = 
+  \begin{bmatrix}
+  \mathbf a_1 \cdot \mathbf e_1 & \mathbf a_2 \cdot \mathbf e_1 & \cdots & \mathbf a_n \cdot \mathbf e_1 \\
+  0 & \mathbf a_2 \cdot \mathbf e_2 & \cdots & \mathbf a_n \cdot \mathbf e_2 \\
+  \vdots & \vdots & \ddots & \vdots \\
+  0 & 0  & \cdots & \mathbf a_n \cdot \mathbf e_n
+  \end{bmatrix},$$
+\end{enumerate}
+
+\section{LU dekompozicija}
+\begin{align*}
+A\mathbf x &= \mathbf b\\
+A\mathbf x &= LU\mathbf x = \mathbf b\\
+\end{align*}
+Supstitucija unaprijed:
+$$L\mathbf y = \mathbf b$$
+$$y_i = b_i - \sum\limits_{j=1}^{i-1}l_{ij}\cdot y_j, \quad i = 1, \ldots, n$$
+Supstitucija unatrag:
+$$U\mathbf x = \mathbf y$$
+$$x_i = \frac{1}{u_{ii}}\cdot \left ( y_i - \sum\limits_{j=i+1}^n u_{ij}\cdot x_j\right ), \quad i = n, \ldots, 1$$
+LU dekompozicija:
+\begin{algorithmic}
+  \For{$i = 1 \textrm{ to } n-1$}
+    \For{$j = i+1 \textrm{ to } n$}
+        \State{$a_{ji} = a_{ji} / a_{ii}$}
+        \For{$k = i+1 \textrm{ to } n$}
+          \State{$a_{jk} = a_{jk}-a_{ji}\cdot a_{ik}$}
+        \EndFor
+    \EndFor
+  \EndFor
+\end{algorithmic}
+Matrica ima jedinstveno LU dekompoziciju ako su sve njene glavne podmatrice regularne.
+
+\section{Nelinearne jednadžbe}
+\begin{description}
+  \item[Broj točnih znamenki:] $$\left\lfloor -\log_{10} \left ( \frac{|x^{(k)} - x^\ast |}{|x^\ast|}\right ) \right \rfloor$$
+\end{description}
+
+\subsection{Metoda jednostavnih iteracija}
+Nelinearni jednadžbu $f(x) = 0$ zapišemo u obliku $x = \varphi (x)$.
+\begin{algorithmic}
+\Require{$x_0$ i $\varepsilon$}
+\While{$|x_{n+1} - x_n| < \varepsilon$}
+  \State{$x_{n+1} = \varphi(x_n)$}
+  \State{n = n+1}
+\EndWhile
+\end{algorithmic}
+
+
+\subsection{Newton}
+\begin{algorithmic}
+\Require{$x_0$ i $\varepsilon$} \Comment{$x_0$ je blizu rješenja!}
+\While{$|f(x)| > \varepsilon$}
+  \State{$x = x- f(x)/f'(x)$}
+\EndWhile
+\end{algorithmic}
+\textsc{Kriteriji zaustavljanja:}
+\begin{description}
+  \item[Ocjena reziduala:] $|f(x_n)| \leq \varepsilon |f(x_0)|,$
+  \item[Ocjena duljine koraka:] $|x_{n+1}-x_n| \leq \varepsilon |x_0|.$
+\end{description}
+
+\subsection{Metoda sekante}
+\begin{algorithmic}
+\Require{$x_0$, $x_p \neq x_0$ i $\varepsilon$}
+\While{$|f(x)| > \varepsilon$}
+  \State{$g = \frac{f(x)-f(x_p)}{x-x_p}$}
+  \State{$x_p = x$}
+  \State{$x = x- f(x)/g$}
+\EndWhile
+\end{algorithmic}
+
+\section{Newton za sustave nelinearnih jednadžbi}
+\begin{align*}
+f_1(x_1, \ldots&, x_n) = 0 \\
+f_2(x_1, \ldots&, x_n) = 0 \\
+\vdots&\\
+f_n(x_1, \ldots&, x_n) = 0
+\end{align*}
+Imamo $n$ nelinearnih jednadžbi sa $n$ nepoznanica.
+
+Jakobijan:
+$$D\mathbf f(\mathbf x) =
+\begin{bmatrix}
+\dfrac{\partial f_1(\mathbf x)}{\partial x_1} & \dfrac{\partial f_1(\mathbf x)}{\partial x_2} & \cdots & \dfrac{\partial f_1(\mathbf x)}{\partial x_n} \\ 
+\dfrac{\partial f_2(\mathbf x)}{\partial x_1} & \dfrac{\partial f_2(\mathbf x)}{\partial x_2} & \cdots & \dfrac{\partial f_2(\mathbf x)}{\partial x_n} \\ 
+\vdots &  \vdots & \ddots & \vdots \\
+\dfrac{\partial f_n(\mathbf x)}{\partial x_1} & \dfrac{\partial f_n(\mathbf x)}{\partial x_2} & \cdots & \dfrac{\partial f_n(\mathbf x)}{\partial x_n}  
+\end{bmatrix}$$
+\textsc{Algoritam:}
+\begin{algorithmic}
+\Require{$x$ i $\varepsilon$}
+\While{$\|\mathbf f(\mathbf x)\| > \varepsilon$}
+  \State{$x = x- D\mathbf f(\mathbf x)^{-1}\mathbf f(\mathbf x) $}
+\EndWhile
+\end{algorithmic}
+Pretpostavimo da je $D\mathbf f(\mathbf x)$ nesingularna. Računaj:
+\begin{align*}
+H = D\mathbf f(\mathbf x) \\
+g = \mathbf f(\mathbf x)
+\end{align*}
+riješi:
+\begin{align*}
+H\Delta x = -g \\
+x = x+\Delta x
+\end{align*}
+
+\subsection{Globalno konvergentna Newtonova metoda}
+\begin{algorithmic}
+\Require{$x_0$}
+\For{$n = 0, 1, \ldots$}
+  \State{$x_{n+1} = x_n - f(x_n)/f'(x_n)$}
+  \While{$|f(x_{n+1})| \geq |f(x_n)|$}
+    \State{$x_{n+1} = (x_{n+1} + x_n)/2$}
+  \EndWhile
+\EndFor
+\end{algorithmic}
+
+\section{IEEE fp format}
+Predznak $z$ (1 bit), eksponent $e$ ($k$ bitova), frakcija $f$ ($p$ bitova); $a = 2^{k-1}-1$.
+\begin{table}[!h]
+\centering
+%{\color{\doccol}
+\caption{Izračun fp brojeva}
+\begin{tabular}{ccc}
+\toprule
+$e$ & $f$ & Vrijednost \\
+\midrule
+0 & 0 & $(-1)^z \cdot 0 = \pm 0$\\
+0 & $1\le f \le 2^p-1$ & $(-1)^z \cdot 2^{-a+1}\cdot(0.f)$\\
+$1\le e \le 2^k-2$ & $0\le f \le 2^p-1$ & $(-1)^z \cdot 2^{e-a}\cdot(1.f)$\\
+$2^{k}-1$ & 0 & $(-1)^z \cdot \infty$\\
+$2^{k}-1$ & $\neq 0$ & NaN\\
+\bottomrule
+\end{tabular}
+%}
+\end{table}
+
+\begin{description}
+  \item[Strojni epsilon:] udaljenost između 1 i prvog većeg fp-broja. Određen je sa
+  $$\varepsilon = 2^{-p},$$
+  pri čemu je $p$ broj bitova mantise.
+  \item[Maks.\ pogreška u bin.\ bazi:] $2^{k-p-1}$
+  \item[Jednostruka preciznost:] 1 bit za predznak, 8 za eksponent i 23 za mantisu.
+  \item[Dvostruka preciznost:] 1 bit za predznak, 11 za eksponent i 52 za mantisu.
+\end{description}
+
+\section{Asimptotsko ponašanje funkcija}
+$$f = O(g) (x \rightarrow x_0) \quad \Leftrightarrow \quad \lim\limits_{x \rightarrow x_0} \sup \left | \frac{f(x)}{g(x)}\right| < \infty$$
+$$f = o(g) (x \rightarrow x_0) \quad \Leftrightarrow \quad \lim\limits_{x \rightarrow x_0} \left | \frac{f(x)}{g(x)}\right| = 0$$
+
+\section{Linearna algebra}
+\begin{description}
+  \item[Singularnost:] Matrica $A \in \mathbb R^{n \times n}$ je singularna te vrijedi:
+  \begin{itemize}
+    \item $A$ nema inverz,
+    \item $\textrm{det}(A) = 0$,
+    \item $\textrm{rang}(A) < n$,
+    \item $A \mathbf x = 0$ ima netrivijalno rješenje.
+  \end{itemize}
+  \item[Regularnost:] Matrica $A \in \mathbb R^{n \times n}$ je regularna te vrijedi:
+  \begin{itemize}
+    \item $A$ nema inverz,
+    \item $\textrm{rang}(A) = n$,
+    \item $A \mathbf x = 0 \Leftrightarrow \mathbf x = 0$, 
+    \item $A \mathbf x = \mathbf b$ ima jedinstveno rješenje.
+  \end{itemize}
+  \item[Svojstvene vrijednosti:]
+  $$\textrm{det}(A-\lambda I) = 0$$
+  \item[Pozitivno definitna matrica:]
+  $$\mathbf x^\top A \mathbf x > 0, \quad \forall \mathbf x \neq 0.$$
+  \item[Determinanta:]
+  $$\textrm{det}(A) = \left\{
+    \begin{array}{@{\>}l@{\quad}l}
+    a_{11}, & n = 1,\\
+    \sum\limits_{j=1}^n \Delta_{ij}\cdot a_{ij}, & n > 1, \forall i = 1,\ldots ,n
+    \end{array}
+    \right.$$
+  pri čemu je
+  $$\Delta_{ij} = (-1)^{i+j} \textrm{det}(A_{ij}),$$
+  dok je $A_{ij}$ matrica $A$ bez $i$-tog retka i $j$-tog stupca.
+  \item[Uvjetovanost simetrične pozitivno definitne matrice:] $\kappa(A) = \|A\|\|A^{-1}\|$, matrica je loše uvjetovana kad vrijedi $\kappa(A)\gg 1$.
+  \item[Ortogonalna transformacija vektora:] vektor $Qx$ pri čemu je $Q$ ortogonalna matrica ($Q^\top Q = I$). Ortogonalne transformacije čuvaju euklidsku normu: $\|Qx\|^2_2 = (Qx)^\top Qx = x^\top Q^\top Qx = x^\top x = \|x\|^2_2$.
+
+\end{description}
+
+%}
+\end{document}
+

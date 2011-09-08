@@ -1,0 +1,12 @@
+Upute za doradu slika
+=====================
+
+Slike uz izvode su u vektorskom formatu.
+
+Dorade slika radite nad EPS datotekama te ih naknadno konvertirajte u PDF.
+Preporuka alata: Inkscape (http://inkscape.org/)
+
+Konvertiranje EPS u PDF: Inkscape ili epstopdf alat.
+Napomena: ako epstopdf alat rezultira velikim PDF-om s malom slikom na njemu, iskoristite:
+  epstopdf --gsopt=-dEPSCrop foo.eps
+

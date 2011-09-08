@@ -1,0 +1,292 @@
+\documentclass[11pt]{article} 
+\usepackage[utf8]{inputenc}
+\usepackage[croatian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{lmodern}
+\geometry{a4paper}
+
+\newcommand{\DES}{\text{DES}}
+
+\title{Napredni operacijski sustavi\\Sažetak}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Zaštita ostvarena sučeljem prema korisniku}
+\begin{itemize}
+  \item identifikacija = predstavljanje
+  \item autentifikacija = identifikacija i njena verifikacija
+  \item autorizacija = autentifikacija i provjera ovlasti
+\end{itemize}
+
+\section{Vrste sigurnosnih napada}
+\begin{enumerate}
+  \item Prisluškivanje -- narušava \emph{povjerljivost}
+  \item Prekidanje -- narušava \emph{raspoloživost}
+  \item Promjena sadržaja -- narušava \emph{integritet} (\emph{besprijekornost})
+  \item Izmišljanje poruka -- narušava \emph{integritet} (\emph{besprijekornost})
+  \item Lažno predstavljanje
+  \item Poricanje
+\end{enumerate}
+
+\section{Sigurnosni zahtjevi}
+\begin{enumerate}
+  \item \emph{Povjerljivost (tajnost)} -- informacije smiju biti pristupačne samo ovlaštenim korisnicima
+  \item \emph{Raspoloživost} -- informacije moraju uvijek biti raspoložive
+  \item \emph{Besprijekornost} -- mora se osigurati jamstvo da su informacije poslane, primljene ili pohranje u izvornom i nepromijenjenom obliku
+  \item \emph{Autentičnost} -- mora se moći utvrditi pravi identitet korisnika
+  \item \emph{Autorizacija} -- određene akcije mogu izvršavati samo ovlašteni korisnici
+  \item \emph{Neporecivost} -- korisnik ne smije moći opovrgnuti svoju radnju
+\end{enumerate}
+
+\section{DES (Data Encryption Standard)}
+\begin{itemize}
+  \item Zasniva se na permutaciji bitova i XOR operaciji
+  \item Kriptira blokove duljine 64 bita
+  \item Ključ ima 56 bitova (ima i verzija sa 128 bitova)
+  \item $3\DES(P, K_1, K_2, K_3) = \DES(\DES^{-1}(\DES(P, K_1), K_2), K_3)$
+  \item $\text{DESX}(P, K_1, K_2, K_3) = \DES(P \oplus K_2, K_1) \oplus K_3$
+  \item Nije uvijek točno da se kaskadom sustava dobije sigurniji sustav. Postoji teorem koji kaže da će kaskada u najgorem slučaju biti jednako sigurna kao i prvi u kaskadi.
+  \item Sigurnost DES-a je postignuta praksom (isprobavanjem različitih varijanata $S$ i $P$ blokova kako bi što manje informacije curilio)
+\end{itemize}
+
+\section{IDEA (International Data Encryption Algorithm)}
+\begin{itemize}
+  \item \emph{9 koraka} (u prvih 8 se koristi 6 16-bitnih potključeva te operacije: XOR, zbrajanje po modulu $2^{16}$, množenje po modulu $2^{16}+1$; u 9. se koriste 4 ključa i operacija XOR)
+  \item Kriptira blokove duljine 64 bita
+  \item Ključ ima 128 bitova
+\end{itemize}
+
+\section{AES (Advanced Encryption Standard)}
+\begin{itemize}
+  \item Broj koraka ovisi o veličini bloka ključa i bloka podataka
+  \item U svakom koraku obavljaju se transformacije: \emph{Zamijeni znakove}, \emph{Posmakni redove}, \emph{Pomješaj stupce}, \emph{Dodaj potključ} (u zadnjem koraku se ne obavlja \emph{Pomješaj stupce})
+  \item Kriptira blokove duljine 128 bitova
+  \item Ključ može imati 128, 192 ili 256 bitova
+  \item Sigurnost AES-a je matematički dokaziva.
+\end{itemize}
+
+\section{Načini kriptiranja}
+\begin{itemize}
+  \item ECB (Electronic Notebook)
+\begin{itemize}
+  \item Svaki blok se kriptira i dekriptira zasebno (jednak tekst kriptira se u jednak cipher)
+  \item Pogreška jednog bloka utječe samo na taj blok
+\end{itemize}
+  \item CBC (Cipher Block Chaining)
+\begin{itemize}
+  \item Jasni tekst se XOR-a s kriptiranim blokom (za prvi blok  se koristi inicijalizacijski vektor) -- $C[n] = Crypt(P[n] \oplus K[n-1], key)$, $K[-1]$ je inicijalizacijski vektor
+  \item Kriptirani blok ovisi o prethodnim blokovima
+  \item Izbjegavati korištenje istog inicijalizacijskog vektora s istim ključem
+  \item Ako se dogodi greška u prijenosu 2 bloka su kriva
+\end{itemize}
+  \item CFB i OFB
+\begin{itemize}
+  \item Stream šifrator (ključ proizvoljne duljine postiže se uzastopnim kriptiranjem početne vrijednosti -- inicijalizacijskog vektora)
+  \item Inicijalizacijski vektor ne mora biti tajan
+  \item OFB: $C[n] = Crypt(K[n-1] \oplus P[n-1], key) \oplus P[n]$, $K[-1]$ je inicijalizacijski vektor
+  \item CFB: $C[n] = Crypt(K[n-1], key) \oplus P[n]$, $K[-1]$ je inicijalizacijski vektor
+  \item CFB -- pogreška u kriptiranom tekstu se propagira na [1?] sljedeći blok
+\end{itemize}
+  \item CTR (Counter)
+\begin{itemize}
+  \item Slično OFB-u; niz ključeva se dobiva kriptiranjem rastuće vrijednosti brojača
+  \item CTR: $C[n] = Crypt(K[n-1]+ctr(n), key) \oplus P[n]$, $K[-1]$ je inicijalizacijski vektor, $ctr(n) < ctr(n+1)$
+\end{itemize}
+\end{itemize}
+
+\section{Eulerova phi (totient) funkcija}
+Imamo $Z_n = \{0, 1, 2, \ldots, n-1\}$ te definiramo skup elemenata od $Z_n$ koji su relativno prosti u odnosu na $n$:
+$$Z_n^* = \{a \in Z_n, \text{nzd}(a,n)=1\}$$
+Eulerova \emph{totient} funkcija:
+$$\varphi(n) \equiv |Z_n^*|$$
+\begin{enumerate}
+\item $n$ je prost $\rightarrow \varphi(n) = n-1$
+\item $n = p \cdot q$ pri čemu su $p$ i $q$ prosti $\rightarrow \varphi(n) = (p-1)(q-1)$
+\item $n$ ima rastav $n = p_1^{e_1}p_2^{e_2}p_3^{e_3},\ldots,p_k^{e_k} \rightarrow \varphi(n) = n \left(1-\frac{1}{p_1}\right)\left( 1-\frac{1}{p_2}\right)\cdots\left( 1-\frac{1}{p_k}\right)$
+\end{enumerate}
+\section{Modularno potenciranje}
+Računamo $d = b^a \;\text{mod}\; n$ (složenost: $O(\log a)$). Uzmimo da je $a_m, a_{m-1}, \ldots, a_1, a_0$ binarni prikaz od $a$.
+\begin{verbatim}
+d = 1;
+i = m;
+dok je ( i >= 0) {
+    d = (d*d) mod n;
+    ako je (a[i] == 1) {
+        d = (d*b) mod n;
+    }
+    i--;
+}
+\end{verbatim}
+
+\section{Eulerov teorem}
+$\forall a,n,\; n \in \mathbb{N}, a \in Z_n^*$ i $n>1$ vrijedi $a^{\varphi(n)} \equiv 1\; (\text{mod}\; n)$
+\section{Mali fermatov teorem}
+Za proste brojeve $p$ vrijedi:
+$$\forall a, a \in Z_p^* \; \text{vrijedi}\; a^{p-1} \equiv 1\; (\text{mod}\; p)$$
+posljedica teorema:
+$$\forall a, a \in Z_p \; \text{vrijedi}\; a^{p} \equiv a\; (\text{mod}\; p)$$
+\section{Diskretni logaritam (indeks)}
+$x = \text{ind}_{n,a}(b)$  uz $a^x \equiv b\; (\text{mod}\; n)$
+
+\section{RSA}
+Temelji se na različitosti složenosti pronalaženja prostih brojeva ($O(m^2)$) i postupka faktorizacije ($O(2^{m/2})$).
+\begin{enumerate}
+  \item Odabiru se dva velika prosta broja $p$ i $q$ ($p > 10^{100}, q > 10^{100}$)
+  \item $n = p\cdot q$
+  \item $\varphi(n)=(p-1)(q-1)$
+  \item Odabire se broj $e < \varphi(n)$ relativno prost u odnosu na $\varphi(n)$
+  \item Računa se $d$, $d < \varphi(n)$ kao $e\cdot d = k\cdot \varphi(n)+1$ tj.\ $e\cdot d \equiv 1 \;(\text{mod}\; \varphi(n))$
+  \item Javni ključ $K_E = (e, n)$
+  \item Privatni ključ $K_D = (d, n)$
+\end{enumerate}
+Enkriptiranje: $\text{RSA}(P, K_E) = P^e \;\text{mod}\; n$\\
+Dekriptiranje: $\text{RSA}^{-1}(C, K_D) = C^d \;\text{mod}\; n$
+
+\section{Pronalaženje prostih brojeva}
+Za velike $n$ funkcija gustoće prostih brojeva približno je jednaka:
+$$\pi(n) = \frac{n}{\ln(n)}$$
+znači, vjerojatnost da slučajno odabrani veliki broj $n$ bude prost približno je jednaka $1/\ln(n)$. Tj.\ u okolici od $n$ treba ispitati približno $\ln(n)$ brojeva.
+
+\subsection{Heurističko ispitivanje po Miller-Rabinu}
+Zasniva se na malom Fermatovom teoremu i svojstvu da je broj $x$ netrivijalni drugi korijen od $1 \;\text{mod}\; n$ ako je zadovoljena jednadžba: $x^2 \equiv 1\; (\text{mod}\; n)$ i $x \ne 1, x \ne n \pm 1$.
+\begin{verbatim}
+provjera_slozenosti(a, b, G) {
+    G = 0;  d = 1;
+    c = n-1;  i = -1;
+    dok je c > 0 {
+        i++;
+        b[i] = c mod 2;
+        c = c div 2;
+    }
+    dok je ((i >= 0) i (G == 0)) {
+        d_s = d;
+        d = (d*d) mod n;
+        ako je ((d == 1) i (d_s != 1) i (d_s != n+1)) {
+            G = 1;
+        }
+        ako je (b[i] == 1) {
+            d = (d*a) mod n;
+        }
+        i--;
+    }
+    ako je ((i == -1) i (d != 1)) {
+        G = 1;
+    }
+}
+\end{verbatim}
+\newpage
+Otkrivanje je li broj prost (s velikom pouzdanošću):
+\begin{verbatim}
+G = 0;
+i = k;
+dok je ((i >= 0) i (G == 0)) {
+    a = random(1, n-1); // 1 < a < n-1
+    provjera_slozenosti(a,n,G);
+    i--;
+}
+ako je (G == 1) {
+    n je složeni broj (100%!)
+} inače {
+    n je prost (skoro sigurno)
+}
+\end{verbatim}
+
+\section{Digitalna omotnica}
+\begin{enumerate}
+  \item Odabir proizvoljnog ključa $K$
+  \item $C_1 = \text{AES}(P, K)$
+  \item Kriptiranje javnim ključem primatelja: $C_2 = \text{RSA}(K, K_{EB})$
+  \item $M = (C_1, C_2)$
+\end{enumerate}
+Ispunjenje zahtjeva tajnosti.
+
+\section{Digitalni potpis}
+\begin{enumerate}
+  \item $M = (P, \text{RSA}(\text{H}(P), K_{DA})$ // Sažetak je kriptiran privatnim ključem pošiljatelja
+\end{enumerate}
+Ispunjenje zahtjeva autentičnosti i besprijekornosti.
+
+\section{Digitalni pečat}
+\begin{enumerate}
+  \item Odabir proizvoljnog ključa $K$
+  \item $C_1 = \text{AES}(P, K)$
+  \item Kriptiranje javnim ključem primatelja: $C_2 = \text{RSA}(K, K_{EB})$
+  \item $S = \text{H}(C_1, C_2)$
+  \item $C_3 = \text{RSA}(S, K_{DA})$ // Sažetak je kriptiran privatnim ključem pošiljatelja
+  \item $M = (C_1, C_2, C_3)$
+\end{enumerate}
+Ukratko: Digitalno potpisana digitalna omotnica\\
+Ispunjenje zahtjeva autentičnosti, besprijekornosti i tajnosti.
+
+\section{MD5 (Message Digest)}
+\begin{itemize}
+  \item Proizvodi sažetak duljine 128 bitova
+  \item Izvorni tekst se dijeli na blokove od 512 bitova tako da:
+\begin{itemize}
+  \item iza zadnjeg bita teksta dodaje se jedna jedinica,
+  \item nakon te jedinice upisuje se onoliko nula da u bloku preostanu 64 bita,
+  \item u preostale bitove upisuje se bitovna duljina izvorne poruke (bez nadopune) [što ako je izvorni tekst djeljiv s 512? dodaje se blok?]
+\end{itemize}
+  \item 4 kruga sa po 16 koraka
+\end{itemize}
+
+\section{SHA (Secure Hash Algorithm)}
+\begin{itemize}
+  \item Proizvodi sažetak duljine 160 bitova
+  \item Izvorni tekst se dijeli na blokove od 512 bitova (nadopuna zadnjeg bloka kao kod MD5)
+  \item 4 kruga sa po 20 koraka
+\end{itemize}
+\section{Svojstva hash funkcija}
+\begin{itemize}
+  \item Otpornost na izračunavanje originala
+\begin{itemize}
+  \item Iz sažetka se ne smije moći izračunati originalna poruka, tj.\ za $H = h(M)$ ne smije postojati $M = h^{-1}(H)$.
+\end{itemize}
+  \item Otpornost na izračunavanje poruka koja daje jednak sažetak
+\begin{itemize}
+  \item Za $M$ i $H = h(M)$ nije moguće naći $M'$ za koju vrijedi $H = H'$ pri čemu je $H' = h(M')$
+\end{itemize}
+  \item Otpornost na kolizije
+\begin{itemize}
+  \item Ne smije biti moguće naći $M_1$ i $M_2$ za koje vrijedi $h(M_1) = h(M_2)$
+\end{itemize}
+\end{itemize}
+
+\section{Diffie-Hellmanov postupak za razmjenu tajnog ključa}
+\begin{enumerate}
+  \item $A$ i $B$ odabiru dva velika, relativno prosta broja $g$ i $p$ (ne moraju biti tajni)
+  \item $A$ odabire veliki nasumični broj $x$ i $B$-u javlja $X$, pri čemu je $X = g^x \;\text{mod}\;  p$
+  \item $B$ odabire veliki nasumični broj $y$ i $A$-u javlja $Y$, pri čemu je $Y = g^y \;\text{mod}\; p$
+  \item $A$ računa ključ $K$: $K = Y^x \;\text{mod}\; p = (g^y)^x \;\text{mod}\; p = g^{xy} \;\text{mod}\; p$
+  \item $B$ računa ključ $K$: $K = X^y \;\text{mod}\;  p = (g^x)^y \;\text{mod}\;  p = g^{xy} \;\text{mod}\; p$
+\end{enumerate}
+Da bi napadač izračunao $K$, trebao bi izračunati diskretni logaritam od $X$ ili $Y$.\\
+Postupak je osjetljiv na \emph{man in the middle} napad (promjena sadržaja).
+
+\section{Raspodjela ključeva i autentifikacija}
+Knjiga str. 327. --- 343.
+
+\section{Autentifikacijski sustav Kerberos}
+Kerberos sustav se sastoji od:
+\begin{itemize}
+	\item čvora klijenta,
+	\item čvora poslužitelja,
+	\item čvora Kerberos poslužitelja koji se sastoji od:
+\begin{itemize}
+		\item baze podataka (identifikatori, lozinke i tajni ključevi svih poslužitelja i klijenata u sustavu),
+		\item autentifikacijskog poslužitelja (AS),
+		\item poslužitelja za dodjelu dozvola (TGS).
+\end{itemize}
+\end{itemize}
+Kerberos protokol, knjiga: str.\ 347.\ --- 350.
+
+\section{Infrastruktura javnih ključeva}
+Knjiga: str.\ 350.\ --- 360.
+
+\end{document}

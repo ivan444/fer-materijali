@@ -1,0 +1,841 @@
+\documentclass[11pt,english]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[croatian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{times}
+\usepackage[a4paper, left=0.5cm, right=0.5cm, bottom=2cm, top=0.5cm]{geometry}
+\usepackage{enumerate}
+
+
+\begin{document}
+\title{Računalni vid}
+\date{}
+\maketitle
+
+\section{Oblikovanje slike}
+
+\subsection{Primarna slika}
+\begin{itemize}
+  \item informacija o $2D$ slici, prvenstveno o promjenama svjetlosnih intenziteta, njihovoj distribuciji i organizaciji,
+  \item građevni elementi:
+  \begin{itemize}
+    \item prolasci kroz nulu (\emph{zero-crossings}),
+    \item mrlje (\emph{blobs}),
+    \item rubni segmenti,
+    \item virtualne linije,
+    \item grupe/nakupine,
+    \item granične linije.
+  \end{itemize}
+\end{itemize}
+
+\subsection{$2^{1/2}D$ skica}
+\begin{itemize}
+  \item informacija o orijentaciji i ``gruboj'' dubini vidljivih površina, te konture i diskontinuiteti tih komponenti (u koordinatnom sustavu promatrača),
+  \item građevni elementi:
+  \begin{itemize}
+    \item lokalna orijentacija vidljivih površina,
+    \item gruba udaljenost od promatrača,
+    \item diskontinuiteti u dubini,
+    \item diskontinuiteti u orijentaciji površina.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Uzorkovanje}
+\begin{itemize}
+  \item predstavljanje kontinuirane funkcije u digitalnom računalu,
+  \item \emph{Shannonov teorem:} ako je Fourierova transformacija funkcije $f(t)$ takva da vrijedi $F(\omega) = 0$ za $|\omega|\geq 2\pi f_c$, funkcija $f(t)$ može biti rekonstruirana ako se njene vrijednosti uzorkuju s $2f_c$ ili većom frekvencijom.
+\end{itemize}
+
+
+\section{Geometrijska svojstva}
+
+Veličina objekta:
+$$A = \sum\limits^n_{i=1}\sum\limits^m_{j=1} B[i,j]$$
+$A$ -- moment nultog reda.
+Moment reda ($p+q$):
+$$m_{pq} = \int\limits^{+\infty}_{-\infty}\int\limits^{+\infty}_{-\infty}x^py^q f(x,y) \operatorname{d}x \operatorname{d}y$$
+Diskretni slučaj:
+$$m_{pq} = \sum\limits^n_{i=1}\sum\limits^m_{j=1} i^p j^q B[i,j]$$
+Položaj objekta -- koordinate težišta:
+\begin{align*}
+\bar x &= \frac{m_{10}}{m_{00}},\\
+\bar y &= \frac{m_{01}}{m_{00}}.
+\end{align*}
+Centralni (središnji) moment stupnja ($p+q$):
+$$\mu_{pq} =\sum_{j \in R}\sum_{i \in R} (j-\bar x)^p(i-\bar y)^q B[i,j].$$
+Centriranjem koordinatni sustav se pomiče u težište objekta te su u tom sustavu momenti nezavisni od pozicije objekta na slici.\\
+Orijentacija objekta ($\theta$):
+\begin{itemize}
+  \item Orijentacija osi u smjeru izduženja objekta.
+  \item Formula za izračun orijentacije prilagođena je za \emph{desno orijentirani} koordinatni sustav (pretvorba lijevo orijentiranog u desno orijentirani: $y$ koordinata se množi s $-1$).
+\end{itemize}
+$$\theta = \frac{1}{2}\operatorname{atan2}\left (2\mu_{11}, \mu_{20}-\mu_{02} \right ),$$
+pri čemu je za $y \ne 0$:
+\begin{align*}
+  \operatorname{atan2}(y,x) &= \left \{ \begin{array}{ll}
+    \theta \cdot \operatorname{sgn}(y),&\quad x>0,\\
+    \frac{\pi}{2}\cdot\operatorname{sgn}(y),&\quad x=0,\\
+    (\pi-\theta)\cdot\operatorname{sgn}(y),&\quad x<0,
+  \end{array}\right.\\
+\end{align*}
+a za $y = 0$:
+\begin{align*}
+  \operatorname{atan2(y,x)} &= \left \{ \begin{array}{ll}
+    0,&\quad x>0,\\
+    \text{nedefinirano},&\quad x=0,\\
+    \pi,&\quad x<0,
+  \end{array}\right.
+\end{align*}
+gdje je $\theta$ kut dobiven iz:
+$$\operatorname{tg}(\theta) = \left \vert \frac{y}{x}\right \vert.$$
+%\begin{align*}
+%\mathrm{tg}\left ( 2\theta \right )&= \dfrac{b}{a-c},\\
+%a &= \sum\limits^n_{i=1}\sum\limits^m_{j=1} (j')^2 B[i,j],\\
+%b &=2\sum\limits^n_{i=1}\sum\limits^m_{j=1} i'\cdot j' B[i,j],\\
+%c &= \sum\limits^n_{i=1}\sum\limits^m_{j=1} (i')^2 B[i,j],\\
+%j'&= j - \bar x,\quad i' = i - \bar y
+%\end{align*}
+
+\section{Binarni algoritmi}
+\subsection{Susjedstvo}
+\begin{itemize}
+  \item 4-susjedstvo $[i,j]$: $[i\pm 1, j]$, $[i,j\pm 1]$
+  \item 8-susjedstvo $[i,j]$: $[i\pm 1, j]$, $[i,j\pm 1]$, $[i\pm 1, j\pm 1]$
+\end{itemize}
+
+\subsection{Projekcije}
+Horizontalna:
+  $$H[i] = \sum\limits^m_{j=1}B[i,j]$$
+Vertikalna:
+  $$V[j] = \sum\limits^n_{i=1}B[i,j]$$
+Vrijedi:
+  \begin{align*}
+    A &= \sum\limits^m_{j=1}V[j] = \sum\limits^n_{i=1}H[i],\\
+    \bar y &= \dfrac{\sum\limits^n_{i=1} i H[i]}{A},\\
+    \bar x &= \dfrac{\sum\limits^m_{j=1} j V[j]}{A}
+  \end{align*}
+
+\subsection{Povezanost}
+Slikovni element $p\in S$ je povezan s $q \in S$ ako postoji put od $p$ do $q$ koji se sastoji od slikovnih elemenata iz $S$.
+
+\emph{Povezana komponenta} je skup slikovnih elemenata u kojem je svaki slikovni element povezan s ostalim slikovnim elementima.
+
+\subsection{Filtar veličine}
+Uklanjanje svih područja u binarnoj slici koja imaju manje od $T_0$ slikovnih elemenata.
+
+\subsection{Eulerov broj}
+$$E=C-H$$
+$C$ -- broj komponenti,
+$H$ -- broj rupa.
+
+\subsection{Označavanje komponenti}
+Nalaženje povezanih komponenti u slici.
+
+\subsubsection{Rekurzivni algoritam}
+\begin{enumerate}[\indent K1:\quad]
+  \item Nađi prvi element s vrijednošću 1. Dodijeli mu novu oznaku $L$.
+  \item Rekurzivno dodijeli oznaku $L$ svim njegovim susjedima.
+  \item Kad više nema neoznačenih susjeda s vrijednošću 1, idi na korak $K1$.
+\end{enumerate}
+
+\subsubsection{Sekvencijalni algoritam}
+\begin{enumerate}[\indent K1:\quad]
+  \item Skeniraj sliku s lijeva udesno (s vrha prema dnu).
+  \item Ako je slikovni element 1, tada:
+  \begin{enumerate}[\indent \indent (a)]
+    \item Ako samo jedan od gornjeg i lijevog susjeda imaju oznaku onda kopiraj tu oznaku.
+    \item Ako oba imaju istu oznaku onda kopiraj tu oznaku.
+    \item Ako oba imaju različite oznake, onda kopiraj oznaku gornjeg i unesi oznake u tablicu ekvivalencija.
+    \item U drugim slučajevima dodijeli novu oznaku tom slikovnom elementu i unesi oznaku u tablicu ekvivalencija.
+  \end{enumerate}
+  \item Ako nema više točaka za razmatranje prijeđi na korak $K2$.
+  \item Nađi najmanju vrijednost u ekvivalentnom skupu oznaka iz tablice ekvivalencija.
+  \item Skeniraj sliku. Zamijeni svaku oznaku ekvivalencijom najmanje vrijednosti.
+\end{enumerate}
+
+\subsection{Granica područja}
+Granica povezane komponente $S$ je skup točaka iz $S$ koje su susjedne $\bar S$.
+
+\subsubsection{Algoritam BF}
+\begin{enumerate}[\indent K1:\quad]
+  \item Provjeri je li objekt ($S$) samo jedan izolirani slikovni element. Ako je, ta točka je ujedno i granica područja. Zaustavi postupak.
+  \item Nađi inicijalni par susjednih točaka $c \in S$ i $d \in \bar S$.
+  \item Promjeni vrijednost točke $c$ u 3 i točke $d$ u 2.
+  \item Neka 8-susjedstvo točke $c$ u smjeru kazaljke na satu, započevši od točke $d$, a završivši s prvim pojavljivanjem 1, 3 ili 4, bude $e_1, e_2, \ldots, e_k$.
+  \begin{enumerate}[\indent \indent (a)]
+    \item Ako $c=3$, $e_k = 4$ i $e_h=2$ za neki $h<k$, promijeni 3 u 4, 2 u 0 i zaustavi se.
+    \item Inače, ako je vrijednost $c$ 1, promijeni vrijednost $c$ u 4. Uzmi $e_k$ kao novu vrijednost $c$ i $e_{k-1}$ kao novu vrijednost $d$, Vrati se na korak 4.
+  \end{enumerate}
+  Kada se BF zaustavi, slikovni elementi koji imaju vrijednost 4 predstavljaju granicu.
+\end{enumerate}
+
+\section{Opis konture}
+Kontura je periodična kompleksna funkcija $d(t)$ s vrijednostima iz skupa $\{(x_t + jy_t)\, |\, t = 0, 1, \ldots, T-1\}$.
+Eulerova formula:
+\begin{align*}
+e^{\varphi j} &= \cos \varphi + j \sin \varphi,\\
+e^{-\varphi j} &= \cos \varphi - j \sin \varphi
+\end{align*}
+$d^c(t)$ -- funkcija konture s početnom točkom obilaženja $c$.
+Utjecaj početne točke:
+$$d(t) = d^c(t+\tau)$$
+Utjecaj pomaka:
+$$d(t)=d^c(t)+\Delta$$
+Utjecaj rotacije:
+$$d(t)=e^{j\varphi}d^c(t)$$
+Utjecaj uvećanja:
+$$d(t)=\alpha d^c(t)$$
+
+\subsection{Opis konture Fourierovim deskriptorima}
+Koeficijenti diskretne Fourierove transformacije:
+$$F(n)=\dfrac{1}{T} \sum^{T-1}_{t=0} d(t)e^{-j2\pi (nt/T)}, \quad n = 0, 1, \ldots, T-1$$
+Inverz:
+$$d(t) = \sum^{T-1}_{t=0} F(n)e^{j2\pi (nt/T)}$$
+
+\subsection{Gronlundovi koeficijenti}
+Funkcije Fourierovih koeficijenata koje eliminiraju utjecaj izbora početne točke, pomaka, rotacije i uvećanja konture:
+$$d_{pq} = \dfrac{F^q(p+1)\cdot F^p(T+1-q)}{F^{(p+q)}(1)}$$
+
+\subsection{Opis konture funkcijama geometrijskih momenata}
+Normiranjem dobivamo normirane središnje momente koji su neovisni o položaju i uvećanju objekta:
+$$\eta_{pq} = \dfrac{\mu_{pq}}{\mu^r_{00}},$$
+pri čemu je $r = ((p+q)/2)+1$ i $(p+q) = 2, 3, \ldots$
+
+Iz normiranih središnjih momenata dobivamo Huove koeficijente:
+\begin{align*}
+\phi_1 = &\eta_{20} + \eta_{02},\\
+\phi_2 = &(\eta_{20} - \eta_{02})^2 + 4\eta_{11}^2,\\
+\phi_3 = &(\eta_{30} - 3\eta_{12})^2 + (3\eta_{21} - \eta_{03})^2,\\
+\phi_4 = &(\eta_{30} + \eta_{12})^2 + (\eta_{21} + \eta_{03})^2,\\
+\phi_5 = &(\eta_{30} -3\eta_{12})(\eta_{30} + \eta_{12}) \cdot
+[(\eta_{30} + \eta_{12})^2-3(\eta_{21} + \eta_{03})^2]+\\
+&(3\eta_{21}-\eta_{03})(\eta_{21} + \eta_{03}) \cdot
+[3(\eta_{30} + \eta_{12})^2 - (\eta_{21} + \eta_{03})^2],\\
+\phi_6 = &(\eta_{20} - \eta_{02}) \cdot
+[(\eta_{30} + \eta_{12})^2- (\eta_{21} + \eta_{03})^2]+\\
+&4\eta_{11}(\eta_{30} + \eta_{12})(\eta_{21} + \eta_{03}),\\
+\phi_7 = &(3\eta_{21} - \eta_{03})(\eta_{30} + \eta_{12}) \cdot
+[(\eta_{30} + \eta_{12})^2-3(\eta_{21} + \eta_{03})^2]-\\
+&(\eta_{30}-3\eta_{12})(\eta_{21} + \eta_{03}) \cdot
+[3(\eta_{30} + \eta_{12})^2 - (\eta_{31} + \eta_{03})^2].
+\end{align*}
+
+\subsection{Opis konture morfološkim značajkama}
+Neovisne su od položaja, pomaka, rotacije i povećanja.
+
+Kompaktnost:
+$$k = \dfrac{4\pi A}{O^2},$$
+pri čemu je $A$ površina, a $O$ opseg područja. Kompaktnost se mijenja između 0 i 1.
+
+Rastegnutost:
+$$e = \dfrac{a}{b},$$
+pri čemu je $a$ dužina pravokutnika koji opisuje područje, a $b$ širina pravokutnika.
+
+\section{Segmentacija}
+Dijeljenje slike $F[i,j]$ na područja $P_1,P_2, \ldots, P_k$ uz uvjete:
+\begin{enumerate}
+  \item $\cup^k_{i=1}P_i = F[i,j]$
+  \item $P_i \cap P_j = \emptyset$
+  \item Sve točke $P_i$ imaju neko zajedničko svojstvo
+\end{enumerate}
+Vrste segmentacije:
+\begin{itemize}
+  \item Amplitudna segmentacija:
+  \begin{itemize}
+    \item uspoređivanje s pragom,
+    \item uspoređivanje s pragom u višedimenzionalnom prostoru.
+  \end{itemize}
+  \item Metode segmentacije područja:
+  \begin{itemize}
+    \item raspršivanje područja,
+    \item stapanje područja,
+    \item kombinacija raspršivanja i stapanja,
+    \item narastanje područja,
+    \item heuristički algoritmi.
+  \end{itemize}
+  \item Rubna segmentacija:
+  \begin{itemize}
+    \item rubni operatori koji aproksimiraju gradijentni operator,
+    \item rubni operatori s višestrukim maskama,
+    \item relaksacijske metode nalaženja rubova.
+  \end{itemize}
+  \item Nalaženje rubova u teksturi (građi)
+\end{itemize}
+
+\subsection{Metoda p-pokrivenosti (p-tile method)}
+%  \item Upotrebljava se znanje o površini objekta.
+%  \item Na temelju te informacije podijelimo histogram ulazne slike s jednim ili više pragova tako da $p$ postotaka slikovnih elemenata pripada objektu.
+\begin{enumerate}[\indent K1:\quad]
+  \item Pretpostavimo da objekti zauzimaju $p$ postotaka cijele slike.
+  \item Kreni od intenziteta 0 na histogramu i broji slikovne elemente.
+  \item Kad postotak prebrojanih bude jednak ili veći od $p$, uzmi zadnju vrijednost intenziteta na histogramu za vrijednost praga.
+\end{enumerate}
+
+\subsection{Vršna metoda (mode method)}
+Uvjet je da objekti imaju jednake vrijednosti sivih razina dok pozadina ima različite.
+\begin{enumerate}[\indent K1:\quad]
+  \item Nađi dva najveća lokalna maksimuma u histogramu koji se nalaze na minimalnoj udaljenosti $d$. Pretpostavimo da su oni na sivim vrijednostima $g_i$ i $g_j$.
+  \item Nađi najmanju točku u histogramu $H$ između $g_i$ i $g_j$, označi ju s $g_k$.
+  \item Odredi šiljatost definiranu sa:
+  $$\min\left ( H(g_i), H(g_j) \right ) / H(g_k).$$
+  \item Povećaj $d$, idi na $K1$.
+  \item Upotrijebi kombinaciju $\left ( g_i, g_j, g_k \right )$ s najvećom ``šiljatosti.'' Vrijednost $g_k$ je dobar prag za izdvajanje objekata koji odgovaraju $g_i$ i $g_j$.
+\end{enumerate}
+Pristup se može poopćiti za slike koje sadrže veći broj objekata sa različitim srednjim vrijednostima sivih razina.
+
+\subsection{Iterativni postupak određivanja praga}
+\begin{enumerate}[\indent K1:\quad]
+  \item Izaberi inicijalnu vrijednost praga $T$ (dobar izbor: srednja vrijednost slikovnih elemenata).
+  \item Podijeli sliku u dvije grupe, $R_1$ i $R_2$ uporabom praga $T$.
+  \item Izračunaj srednju vrijednost $\mu_1$ i $\mu_2$ particija $R_1$ i $R_2$,
+  $$\mu_k = \frac{1}{N_k}\sum_{t(i,j)\in R_k} B[i,j],$$
+  pri čemu je $N_k$ broj slikovnih elemenata područja $R_k$.
+  \item Izaberi novu vrijednost praga:
+  $$T = \dfrac{1}{2} \left ( \mu_1 + \mu_2 \right ).$$
+  \item Ponavljaj korake $K2$ -- $K4$ sve dok se srednje vrijednosti $\mu_1$ i $\mu_2$ u sukcesivnim iteracijama ne prestanu mijenjati.
+\end{enumerate}
+
+\subsection{Adaptivni postupak uspoređivanja s pragom}
+Podijeliti sliku na $m \times m$ podslika i izabrati prag $T_{ij}$ za svaku takvu podsliku na temelju histograma $ij$-te podslike ($i \leq i,j \leq m$). Konačna segmentacija slike je unija regija podslika.
+
+\subsection{Metoda dvostrukog praga}
+Imamo poznate vrijednosti sivih razina koje pripadaju objektima te dodatne vrijednosti svih razina koje pripadaju i objektu i pozadini.
+\begin{enumerate}[\indent K1:\quad]
+  \item Izaberi dva praga $T_1$ i $T_2$.
+  \item Podijeli sliku na 3 područja:
+  \begin{enumerate}[\indent \indent $R_1\;$ -- ]
+    \item sadrži sve slikovne elemente s vrijednosti sivih razina manjih od $T_1$,
+    \item sadrži sve slikovne elemente s vrijednosti sivih razina između $T_1$ i $T_2$,
+    \item slikovni elementi s vrijednošću većom od $T_2$.
+  \end{enumerate}
+  \item Posjeti svaki slikovni element koji je dodijeljen području $R_2$. Ako  slikovni element ima susjedstvo u $R_1$, raspodijeli ga području $R_1$.
+  \item Ponavljaj korak $K3$ dok nema slikovnih elemenata za raspodjelu.
+  \item Razvrstaj preostale slikovne elemente područja $R_2$ u područje $R_3$.
+\end{enumerate}
+
+\section{Prikaz područja}
+Tri osnovna načina prikaza:
+\begin{enumerate}
+  \item \textbf{Plošni (array representation):}
+Za prikaz se koristi ploha iste veličine kao područje u originalnoj slici. Elementi ukazuju na područje kojem slikovni elementi pripadaju.
+  \item \textbf{Hijerarhijski:}
+  \begin{itemize}
+    \item Piramidalni prikaz:
+Izvorna slika se sastoji od $n \times n$ slikovnih elemenata (obično vrijedi $n = 2^k$, $k \in \mathbb Z$). Slikovni element na razini $l$ se dobiva kombinacijom nekoliko slikovnih elemenata na razini $l+1$. Cijela slike predočena je slikovnim elementom na razini 0.
+    \item Quad-stabla:
+Slika se rekurzivno dijeli na četiri područja jednakih veličina.
+  \end{itemize}
+  \item \textbf{Simbolički:}
+    \begin{itemize}
+      \item pravokutnik koji omeđuje područje,
+      \item središte (centroid) područja,
+      \item momenti,
+      \item Eulerov broj.
+    \end{itemize}
+\end{enumerate}
+
+\section{Strukture podataka u postupku segmentacije}
+\begin{itemize}
+  \item grafovi susjednosti područja (RAG -- Region Adjecency Graph),
+  \item slikovna stabla (Picture Tree),
+  \item super mreža (Super Grid).
+\end{itemize}
+
+\subsection{Grafovi susjednosti područja (RAG)}
+\begin{enumerate}[\indent K1:\quad]
+%  \item Skeniraj pripadnost elementa u plošnom prikazu i izvedi sljedeće korake za svaki indeks slikovnog elementa $[i,j]$:
+%  \item Označi $r_1 = a[i,j]$
+%  \item Posjeti susjede $[k,l]$ slikovnog elementa $[i,j]$. Za svakog susjeda izvedi sljedeći korak:
+%  \item Neka je $r_2 = a[k,l]$. Ako $r_1 \neq r_2$ pridodaj luk između čvorova $r_1$ i $r_2$ u RAG.
+  \item Dodaj vrh s oznakom 0 u RAG (vrh 0 označava vanjsku regiju).
+  \item Za svaku regiju dodaj vrh u RAG.
+  \item Ako dvije regije imaju 4-susjedne slikovne elemente, poveži njihove vrhove bridom (uzmi u obzir i vrh 0).
+\end{enumerate}
+Dualni RAG: čvorovi predstavljaju granice a lukovi područja koja su ograničena granicama.
+\begin{enumerate}[\indent K1:\quad]
+  \item Za svaku stranicu RAG-a (i vanjsku!) dodaj vrh u dualni RAG.
+  \item Ako dvije stranice u RAG-u dijele brid, dodaj brid između odgovarajućih vrhova u dualnom RAG-u. Ako stranice dijele $n$ bridova, dodaj $n$-terostruko poveži vrhove u dualnom RAG-u.
+\end{enumerate}
+
+\subsection{Slikovna stabla}
+Naglašavanju obuhvaćanje jednog područja drugim područjem (gnijedženje područja). Dobivaju se rekurzivnim raspršivanjem slike na područja (rekurzija se zaustavlja kad se dobije područje s konstantnim značajkama).
+
+\subsection{Supermreža}
+Koristi se radi točnijeg prikaza granica.
+\begin{enumerate}[\indent K1:\quad]
+  \item Izvorna slika je dimenzija $N \times N$,
+  \item Supermreža je rezolucije $(2N+1) \times (2N+1)$,
+  \item Svaki slikovni element je okružen s osam ne-slikovnih elemenata u takvoj super mreži,
+  \item Ne-slikovni elementi se koriste za prikaz da li postoji granica ili ne između slikovnih elemenata, te u kojem smjeru se proteže granica.
+\end{enumerate}
+
+\section{Raspršivanje i stapanje (Split and Merge)}
+\begin{enumerate}[\indent K1:\quad]
+  \item Započni s cijelom slikom kao jednim područjem.
+  \item Izaberi područje $R$. Ako je $H(R)$ lažno, rasprši područje na četiri potpodručja. $H$ predstavlja sličnost između slikovnih elemenata u području:
+  $$H(R_i) = \left \{ \begin{array}{ll}
+  \top & \text{ako je varijanca vrijednosti sivih razina mala},\\
+  \bot & \text{inače}.
+  \end{array}\right .$$
+  \item Promatraj bilo koja dva ili više susjednih potpodručja $R_1, R_2, \ldots, R_n$ na slici. Ako je $H(R_1 \cup R_2 \cup \ldots \cup R_n)$ istinito stopi tih n područja u jedno.
+  \item Ponavljaj gornje korake sve dok nema daljnjeg raspršivanja ili stapanja.
+\end{enumerate}
+
+\section{Narastanje područja}
+Grupiranje slikovnih elemenata ili potpodručja u veća područja. Postupak započinje sa skupom inicijalnih jezgara (``sjemenki'' područja) iz kojih područja rastu pridruživanjem susjednih slikovnih elemenata koji imaju slična svojstva.
+
+\section{Stapanje područja}
+\begin{enumerate}[\indent K1:\quad]
+  \item Oblikuj inicijalna područja u slici uporabom postupka usporedbe s pragom (ili nekim sličnim postupkom).
+  \item Priredi RAG za sliku.
+  \item Za svako područje u slici izvedi sljedeće korake:
+  \begin{enumerate}[\indent \indent a) \;]
+    \item Promatraj području susjedno područje i ispitaj da li su područja slična.
+    \item Za područja koja su slična stopi ih i modificiraj RAG.
+  \end{enumerate}
+  \item Ponavljaj korak $K3$ sve dok sva područja (koja se mogu stopiti) ne budu stopljena.
+\end{enumerate}
+Sličnost susjednih područja:
+\begin{enumerate}[\indent \text{Pristup} 1:\quad]
+  \item Uspoređivanje srednjih vrijednosti svjetlosnih intenziteta područja --- ako se srednje vrijednosti razlikuju manje od određenog praga, područja su kandidati za stapanje.
+  \item Pretpostavlja se da se vrijednosti intenziteta dobivaju na temelju vjerojatnosne distribucije. Ako se atributi dvaju područja dobivaju na temelju iste statističke distribucije -- stopi područja.
+\end{enumerate}
+
+\subsection{Postupak stapanja statistički sličnih područja}
+Tražimo parametre ($\mu, \sigma$) Gaussove distribucije sivih razina područja $R_1$ i $R_2$. Ako se radi o istoj distribuciji (hipoteza $H_0$) -- područja se stapaju, inače ne (hipoteza $H_1$).
+\begin{enumerate}[\indent K1:\quad]
+	\item Aproksimacija parametara:
+	$$\hat \mu = \frac{1}{n}\sum_{i=1}^n g_i,$$
+	$$\hat \sigma^2 = \frac{1}{n}\sum_{i=1}^n \left (g_i-\hat \mu\right ),$$
+	pri čemu je $n$ broj slikovnih elemenata područja te $g_i$ vrijednost sive razine.
+	\item Omjer vjerodostojnosti $L$:
+	$$L = \frac{p\left (g_1, g_2, \ldots, g_{m_1+m_2} \vert H_1 \right )}{p\left (g_1, g_2, \ldots, g_{m_1+m_2} \vert H_0 \right )} = \frac{\sigma_0^{m_1+m_2}}{\sigma_1^{m_1} \cdot \sigma_2^{m_2}},$$
+	pri čemu je:
+	$$p(g_i) = \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{(g_i-\mu)^2}{2\sigma^2}}$$
+	te je $\sigma_0$ procijenjeni parametar ako oba područja pripadaju istom objektu, dok su $\sigma_1$ i $\sigma_2$ procijenjeni parametri svakog područja zasebno.
+	\item Ako je omjer vjerodostojnosti ispod vrijednosti praga, tada je to jaki argument da postoji samo jedno područje i da se područja $R_1$ i $R_2$ mogu stopiti.
+\end{enumerate}
+
+\subsection{Uklanjanje ``slabih'' rubova}
+\emph{Slaba granica:} granica za koju vrijedi da je razlika intenziteta s obje strane granice manja od praga $T$. Dva pristupa:
+\begin{enumerate}[\indent \text{Pristup} 1:\quad]
+	\item Stopi susjedna područja $R_1$ i $R_2$ ako
+	$$\frac{W}{S} > T,$$
+	gdje je $W$ duljina dijela granice koji je slab, $T$ je prag, a $S$ minimalni opseg dvaju područja ($S = \min(S_1, S_2)$, pri čemu su $S_1$ i $S_2$ opsezi područja $R_1$ i $R_2$).
+	\item Stopi susjedna područja $R_1$ i $R_2$ ako
+	$$\frac{W}{S} > T,$$
+	gdje je $S$ zajednička granica  (vrijednost $T = 0.75$ obično daje dobre rezultate).
+\end{enumerate}
+
+\subsection{Raspršivanje područja}
+Ako neko svojstvo područja nije konstantno, područje treba biti raspršeno.
+\begin{enumerate}[\indent K1:\quad]
+  \item Oblikuj inicijalna područja.
+  \item Za svako područje na slici rekurzivno izvodi sljedeće korake:
+  \begin{enumerate}[\indent \indent a) \;]
+    \item Izračunaj varijancu vrijednosti sivih razina u području.
+    \item Ako je varijanca veća od praga, rasprši područje uzduž odgovarajuće granice.
+  \end{enumerate}
+\end{enumerate}
+\emph{Granica:} područje se potencijalno dijeli na ``čvrsti'' broj područja jednakih veličina. Odgovarajuća granica određena je jakošću granice (unutar nekog nehomogenog područja).
+
+\subsection{Otsuova metoda izbora praga za segmentaciju sive slike}
+Imamo sliku sa $N$ slikovnih elemenata te $L$ sivih razina.
+\begin{enumerate}[\indent K1:\quad]
+	\item Odredi vjerojatnost pojave $i$-te sive razine:
+	$$p_i = \frac{f_i}{N},$$
+	$f_i$ je broj slikovnih elemenata sa sivom razinom $i$.
+  % START iz auditornih.
+  \item Odredi:
+  $$\mu_T=\sum_{i=1}^L i\cdot p_i.$$
+  \item Za svaku sivu razinu $k$ odredi:
+  \begin{align*}
+    \omega_k &= \sum_{i=1}^k p_i,\\
+    \mu_k &= \sum_{i=1}^k i\cdot p_i,\\
+    \sigma_B^2(k) &= \frac{\left( \mu_T\omega_k-\mu_k\right)^2}{\omega_k\cdot\left(1-\omega_k\right)}.
+  \end{align*}
+  %KRAJ iz auditornih.
+%	\item Segmentiramo sliku na dva područja:
+%	$$\begin{array}{ll}
+%	C_1 & \text{područje sa sivim razinama} [1, 2, \ldots, t],\\
+%	C_2 & \text{područje} [t+1, \ldots, L].
+%	\end{array}$$
+%	Odredimo vjerojatnosne distribucije:
+%	\begin{align*}
+%	C_1: & \frac{p_1}{\omega_1(t)}, \frac{p_2}{\omega_1(t)}, \ldots, \frac{p_t}{\omega_1(t)},\\
+%	& \omega_1(t) = \sum^t_{i=1} p_i,\\
+%	C_2: & \frac{p_{t+1}}{\omega_2(t)}, \frac{p_{t+2}}{\omega_2(t)}, \ldots, \frac{p_L}	{\omega_2(t)},\\
+%		& \omega_2(t) = \sum^L_{i=t+1} p_i.
+%	\end{align*}
+%	\item Odredimo srednje vrijednosti područja $C_1$ i $C_2$:
+%	\begin{align*}
+%	\mu_1 &= \sum^t_{i=1} \frac{i \cdot p_i}{\omega_1(t)},\\
+%	\mu_2 &= \sum^L_{i=t+1} \frac{i \cdot p_i}{\omega_2(t)}.
+%	\end{align*}
+%	\item Odredi srednju vrijednost sivih razina cijele slike, $\mu_T$:
+%	$$\mu_T =  \sum^L_{i=1} i \cdot p_i.$$
+%	Vrijedi:
+%	\begin{align*}
+%	\omega_1\mu_1+\omega_2\mu_2 &= \mu_T,\\
+%	\omega_1 + \omega_2 &= 1,
+%	\end{align*}
+%  pri čemu je $\omega_i$ skraćen zapis $\omega_i(t)$.
+%	\item Odredi varijancu za područja:
+%	\begin{align*}
+%	\sigma_1^2 &= \sum^t_{i=1} (i - \mu_1)^2 \cdot \frac{p_i}{\omega_1},\\
+%	\sigma_2^2 &= \sum^L_{i=t+1} (i - \mu_2)^2 \cdot \frac{p_i}{\omega_2}.
+%	\end{align*}
+%	\item Dobrotu praga promatramo kroz omjere varijanci $\sigma_W^2$ (unutar razreda),  $\sigma_B^2$ (između razreda) te  $\sigma_T^2$ (ukupna varijanca).
+%	Diskriminantne mjere:
+%	$$\lambda = \frac{\sigma_B^2}{\sigma_W^2}, \quad \kappa = \frac{\sigma_T^2}{\sigma_W^2}, \quad \eta  = \frac{\sigma_B^2}{\sigma_T^2}.$$ 
+%	Vrijedi:
+%	\begin{align*}
+%	\sigma_W^2 &= \omega_1 \sigma_1^2 + \omega_2\sigma_2^2,\\
+%	\sigma_B^2 &= \omega_1 \omega_2 (\mu_2 - \mu_1)^2,\\
+%	\sigma_T^2 &= \sum_{i=1}^L(i-\mu_T)^2p_i.
+%	\end{align*}
+	\item Odredi optimalni prag:
+	$$t^\ast = \operatorname*{arg\,max}_{1\leq k<L} \left \{ \sigma_B^2(k) \right \}.$$
+\end{enumerate}
+Ako imamo $M$ područja ($C_1, \ldots, C_M$), tada imamo $M-1$ pragova. Vrijedi:
+\begin{align*}
+	\sigma_B^2 &= \sum_{i=1}^M\omega_k(\mu_k-\mu_T)^2,\\
+	\omega_k &= \sum_{i \in C_k} p_i,\\
+	\mu_k &= \sum_{i \in C_k} \frac{i\cdot p_i}{\omega_k}.
+\end{align*}
+
+\section{Rubna segmentacija}
+Segmentacija slike na temelju naglih promjena vrijednosti atributa.
+\begin{description}
+  \item[Rubna točka:] točka u slici s koordinatama $[i, j]$ na mjestu značajne lokalne promjene svjetlosnog intenziteta.
+  \item[Rubni fragment:] $i$ i $j$ koordinate ruba te orijentacija ruba ($\theta$).
+  \item[Rubni detektor:] algoritam kojim se generira skup rubnih točaka ili fragmenata.
+  \item[Oblici ruba:] stepenasti, u obliku rampe, linijski, u obliku krova ili njihove kombinacije.
+\end{description}
+
+\subsection{Gradijent i njegova numerička aproksimacija}
+$$\mathbf G[f(x,y)] = \begin{bmatrix}G_x\\ G_y\end{bmatrix} = \begin{bmatrix}\frac{\partial f}{\partial x}\\ \frac{\partial f}{\partial y}\end{bmatrix}$$
+Svojstva:
+\begin{enumerate}
+  \item Vektor $\mathbf G[f(x,y)]$ pokazuje u smjeru maksimalnog iznosa povećanja funkcije $f(x,y)$.
+  \item Amplituda gradijenta
+  $$G[f(x,y)] = \sqrt{G_x^2 + G_y^2}$$
+  jednaka je maksimalnom iznosu povećanja funkcije $f(x,y)$ po jedinici udaljenosti u smjeru $\mathbf G$.
+Amplitudu možemo aproksimirati sa $\vert G_x \vert + \vert G_y \vert$ ili $\max(\vert G_x\vert,\vert G_y\vert)$.
+\end{enumerate}
+Smjer gradijenta:
+$$\alpha(x,y) = \operatorname{arctg}\left ( \frac{G_y}{G_x}\right ).$$
+Za digitalne slike vrijedi:
+\begin{align*}
+G_x \cong f[i,j+1]-f[i,j],\\
+G_y \cong f[i,j]-f[i+1,j].
+\end{align*}
+Računanje komponenti od $\mathbf G$ može se izvesti pomoću konvolucijskih maski:
+$$G_x = \begin{array}{|c|c|}\hline -1\; & \;~1\;\\ \hline \end{array} \quad \text{i} \quad G_y = \begin{array}{|c|}\hline \;~1\; \\\hline -1\;\\ \hline \end{array}$$
+Da bi se parcijalne derivacije po $x$ i po $y$ računale u istoj točki 
+koriste se maske dimenzija $2 \times 2$ (interpolirana točka je $\left [i+\frac{1}{2},j+\frac{1}{2}\right ]$:)
+$$G_x =
+\begin{array}{|c|c|}
+\hline
+-1\; & \;~1~\;\\ \hline
+-1\; & \;~1~\;\\ \hline
+\end{array}
+\quad \text{i} \quad
+G_y =
+\begin{array}{|c|c|}
+\hline
+\;~1\; & \;~1\;\\ \hline
+-1\; & -1\;\\ \hline
+\end{array}$$
+Koraci u postupku detekcije ruba:
+\begin{enumerate}[\indent K1:\quad]
+  \item Filtriranje.
+  \item Pojačanje (gradijentni operator).
+  \item Detekcija (uspoređivanje s pragom).
+  \item Lokalizacija (procjena položaja ruba na subpixel rezoluciji).
+\end{enumerate}
+
+\subsection{Robertsov križni operator}
+Aproksimira gradijent u interpoliranoj točki $\left [i+\frac{1}{2},j+\frac{1}{2}\right ]$:
+$$G\left [f[i,j]\right ] = \left \vert f[i,j] - f[i+1,j+1]\right \vert + \left \vert f[i+1,j] - f[i,j+1] \right \vert,$$
+preko konvolucijskih maski:
+$$G\left [f[i,j]\right ] = \left \vert G_x \right \vert + \left \vert G_y \right \vert,$$
+pri čemu je:
+$$G_x =
+\begin{array}{|c|c|}
+\hline
+\;~1~\; & \;0\;\\ \hline
+\;~0~\; & -1\;\\ \hline
+\end{array}
+\quad \text{i} \quad
+G_y =
+\begin{array}{|c|c|}
+\hline
+\;~0~\; & -1\;\\ \hline
+\;~1~\; & \;0\;\\ \hline
+\end{array}$$
+
+\subsection{Konvolucija}
+Kontinuirana funkcija:
+$$h(x,y) = f(x,y) \ast g(x,y) =  \int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty} f(x', y')g(x-x', y-y')\operatorname{d}x'\operatorname dy',$$
+diskretna funkcija:
+$$h[i,j] = f[i,j] \ast g[i,j] = \sum_{k=1}^{n}\sum_{l=1}^m f[k,l]\cdot g[i-k,j-l].$$
+%TODO: Skraćeni postupak računanja konvolucije.
+
+\subsection{Sobelov operator}
+Koristi masku dimenzija $3 \times 3$ da bi se izbjeglo računanje gradijenta u interpolacijskoj točki:
+$$\begin{array}{|c|c|c|}
+\hline
+\;a_0\; & a_1 & \;a_2\;\\ \hline
+a_7 &[i,j]& a_3\\ \hline
+a_6 & a_5 & a_4\\ \hline
+\end{array}$$
+Amplituda gradijenta:
+$$M = \sqrt{S_x^2 + S_y^2},$$
+pri čemu su:
+\begin{align*}
+S_x &= (a_2+2a_3+a_4)-(a_0+2a_7+a_6),\\
+S_y &= (a_0+2a_1+a_2)-(a_6+2a_5+a_1),
+\end{align*}
+ili uporabom konvolucijskih maski:
+$$S_x =
+\begin{array}{|c|c|c|}
+\hline
+-1\; & \;~0~\; & \;~1~\;\\ \hline
+-2\; & \;0\; & \;2\;\\ \hline
+-1\; & \;0\; & \;1\;\\ \hline
+\end{array}
+\quad \text{i} \quad
+S_y =
+\begin{array}{|c|c|c|}
+\hline
+~1\; & \;~2~\; & \;~1~\;\\ \hline
+0 & 0 & 0\\ \hline
+-1\; & -2\; & -1\;\\ \hline
+\end{array}$$
+
+\subsection{Prewittov operator}
+$$S_x =
+\begin{array}{|c|c|c|}
+\hline
+-1\; & \;~0~\; & \;~1~\;\\ \hline
+-1\; & \;0\; & \;1\;\\ \hline
+-1\; & \;0\; & \;1\;\\ \hline
+\end{array}
+\quad \text{i} \quad
+S_y =
+\begin{array}{|c|c|c|}
+\hline
+~1\; & \;~1~\; & \;~1~\;\\ \hline
+0 & 0 & 0\\ \hline
+-1\; & -1\; & -1\;\\ \hline
+\end{array}$$
+
+\subsection{Laplacian}
+Dvodimenzionalni ekvivalent druge derivacije funkcije $f(x,y)$:
+$$\nabla^2 f = \frac{\partial^2f}{\partial x^2} + \frac{\partial^2f}{\partial y^2}.$$
+Aproksimacija diferencijama:
+\begin{align*}
+\frac{\partial^2f}{\partial x^2} &= \frac{\partial G_x}{\partial x} = \frac{\partial ( f[i,j+1]-f[i,j])}{\partial x}\\
+&=\frac{\partial f[i,j+1]}{\partial x}-\frac{\partial f[i,j]}{\partial x}\\
+&=\left ( f[i,j+2]-f[i,j+1]\right ) - \left ( f[i,j+1]-f[i,j]\right )\\
+&=f[i,j+2]-2f[i,j+1]+f[i,j].
+\end{align*}
+Aproksimacija je centralizirana oko točke $[i,j+1]$. Zamjenom $j$ s $j-1$ dobiva se:
+$$\frac{\partial^2 f}{\partial x^2} = f[i,j+1]-2f[i,j]+f[i,j-1].$$
+Analogno vrijedi:
+$$\frac{\partial^2 f}{\partial y^2} = f[i+1,j]-2f[i,j]+f[i-1,j].$$
+Kombiniranjem dobiva se maska:
+$$\nabla^2 \approx
+\begin{array}{|c|c|c|}
+\hline
+\;~0~\; & \;~1~\; & \;~0~\;\\ \hline
+1 & -4& 1\\ \hline
+0 & 1 & 0\\ \hline
+\end{array}$$
+Središnji element se može naglasiti, primjerice:
+$$\begin{array}{|c|c|c|}
+\hline
+\;~~1~~\; & 4 & \;~~1~~\;\\ \hline
+4 &-20\;& 4\\ \hline
+1 & 4 & 1\\ \hline
+\end{array}$$
+
+\subsection{Laplacian Gaussove maske (LoG)}
+\begin{enumerate}[\indent K1:\quad]
+  \item Izgladi sliku pomoću Gaussove maske.
+  \item ``Pojačaj'' rubove uporabom druge derivacije ($2D$ Laplacian).
+  \item Detektiraj mjesta ``prolaska kroz nulu.''
+\end{enumerate}
+LoG operator:
+$$h(x,y) = \left [ \nabla^2 g(x,y) \right ] \ast f(x,y),$$
+pri čemu vrijedi:
+$$\nabla^2g(x,y) = \left ( \frac{x^2+y^2-2\sigma^2}{4\sigma^2} \right ) \cdot e^{-\frac{x^2+y^2}{2\sigma^2}}.$$
+
+\subsubsection{Izvod Gaussove maske}
+Zero-mean Gaussova funkcija:
+$$g(x)=e^{-\frac{x^2}{2\sigma^2}}.$$
+Dvodimenzionalna zero-mean diskretna Gaussova funkcija:
+$$g[i,j] = e^{-\frac{i^2+j^2}{2\sigma^2}},$$
+uz normalizaciju:
+$$\frac{g[i,j]}{c} = e^{-\frac{i^2+j^2}{2\sigma^2}}.$$
+Za izabranu vrijednost $\sigma^2$ dobivamo $n \times n$ masku (jezgro),
+$$n \geq 2\sigma^2.$$
+\begin{enumerate}[\indent K1:\quad]
+  \item Za određene vrijednosti $n$ i $\sigma^2$ izračunaj $n \times n$ vrijednosti $g[i,j]$.
+  \item Uzmi najmanju vrijednost $g_{min}[i,j]$ i nađi $c$ tako da vrijedi: $g_{min}[i,j] \cdot c = 1$.
+  \item Pomnoži sve vrijednosti matrice sa $c$ (tako da matrica ima samo cjelobrojne vrijednosti).
+\end{enumerate}
+\textsc{Napomena:} Nakon konvolucije slikovni elementi moraju biti normalizirani!
+\begin{align*}
+K &= \sum_i\sum_j g[i,j],\\
+h[i,j] &= \frac{1}{K} \cdot \left ( I[i,j] \ast g]i,j] \right ).
+\end{align*}
+
+\subsection{Cannyev detektor ruba}
+\begin{enumerate}[\indent K1:\quad]
+  \item Izgladi sliku Gaussovim filtrom.
+  \begin{itemize}
+    \item Sliku $I[i,j]$ konvoluiramo sa Gaussovim filtrom $G[i,j:\sigma]$:
+    $$S[i,j] = G[i,j:\sigma] \ast I[i,j].$$
+  \end{itemize}
+  \item Izračunaj amplitudu i orijentaciju gradijenta uporabom aproksimacije parcijalne derivacije, tj.\ aproksimiramo gradijent ``izglađene'' slike $S[i,j]$.
+  \item Uporabi potiskivanje nemaksimalnih vrijednosti (nonmaxima suppression) na slici amplituda gradijenta.
+  \begin{itemize}
+    \item $M[i,j]$ je slikovno polje amplituda gradijenta.
+    \item Da bi se našli rubovi, široke linije u $M$ se moraju stanjiti tako da ostanu samo točke s najvećim lokalnim promjenama (non-maxima suppression).
+    \item Postupkom potiskivanja ne-maksimalnih vrijednosti linije u slikovnom polju amplituda $M[i,j]$ se stanjuju potiskivanjem vrijednosti uzduž linije gradijenta (i to onih koje nisu vršne vrijednosti).
+    \item Postupak započinje redukcijom kuta gradijenta $\theta[i,j]$ u jedan od četiri sektora.
+    $$\rho[i,j] = \operatorname{sector}\left(\theta [i,j]\right ).$$
+    \item Algoritam prolazi $3 \times 3$ susjedstvo uzduž (i poprijeko) slikovnog polja $M[i,j]$. U svakoj točki -- centralnom elementu $M[i,j]$ susjedstva uspoređuje vrijednosti njegovih dvaju susjeda (uzduž linije gradijenta zadane vrijednosti sektora $\rho[i,j]$).
+    \item Ako je amplituda $M[i,j]$ u centru takva da nije veća od oba susjeda uzduž linije gradijenta, tada $M[i,j]$ postavlja u 0.
+    \item Rezultat:
+    $$N[i,j] = \operatorname{nms}\left( M[i,j],\rho[i,j]\right).$$
+    Vrijednosti različite od 0 u $N[i,j]$ odgovaraju (potencijalnim) rubovima.
+  \end{itemize}
+  \item Uporabi algoritam dvostrukog praga za detekciju i povezivanje rubova.
+  \begin{itemize}
+    \item Izabiru se dva praga, $\tau_1$ i $\tau_2$, pri čemu vrijedi:
+    $$\tau_2 \approx 2\tau_1.$$
+    \item Usporedbom s pragom generiraju se dvije slike rubova, $T_1$ i $T_2$.
+    \item Ide se po slici $T_2$ i kad se dođe do kraja konture traži se u slici $T_1$ (na lokacijama 8-susjedstva) rub koji se može povezati u konturu.
+  \end{itemize}
+\end{enumerate}
+
+\subsection{Pronalaženje granica}
+Metode:
+\begin{itemize}
+  \item Metoda pristajanja s krivuljom -- upotrebljava se a priori informacija o obliku granice.
+  \item Metoda podjeli-pa-vladaj -- upotrebljava se informacija o postojanju ruba između dvije konačne točke.
+  \item Hughova metoda -- znanje o mjestu granice je vrlo malo, ali njen oblik može se opisati u parametarskom obliku i ima jednostavan analitički oblik.
+  \item Uopćena Hughova metoda -- za granice koje nemaju jednostavan analitički oblik ali imaju svojstvenu konturu koja se ne može opisati jednostavnim analitičkim oblikom.
+  \item Heuristički algoritam pretraživanja grafova.
+\end{itemize}
+
+\subsubsection{Metoda pristajanja s krivuljom}
+Tražimo polinom $g(x)$ tako da je greška između skupova $\{(x_i,y_i)\}$ i $\{(x_i,g(x_i))\}$ minimalna. Greška se definira sa:
+$$\varepsilon = \sum_{i=1}^M\left [ y_i - g(x_i) \right ]^2.$$
+Tražimo koeficijente $\mathbf a$ u obliku vektora:
+$$\mathbf X \mathbf a = \mathbf g(\mathbf x),$$
+odnosno:
+$$\begin{bmatrix}
+1 & x_1 & x_1^2 & \cdots & x_1^N\\
+1 & x_2 & x_2^2 & \cdots & x_2^N\\
+& \vdots & & \ddots & \vdots\\
+1 & x_M & x_M^2 & \cdots & x_M^N
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+a_0\\
+a_1\\
+\vdots\\
+a_M
+\end{bmatrix}
+=
+\begin{bmatrix}
+g(x_0)\\
+g(x_1)\\
+\vdots\\
+g(x_M)
+\end{bmatrix}$$
+Traženi skup težinskih koeficijenata dan je izrazom:
+$$\mathbf a = \mathbf X^- \mathbf g(\mathbf x),$$
+pri čemu je $\mathbf X^-$ generalizirani inverz, vrijedi:
+$$\mathbf X^- = \left ( \mathbf X^\top\mathbf X\right )^{-1}\mathbf X^\top.$$
+Za slučaj $M = N$ vrijedi $\mathbf X^- = \mathbf X^{-1}$.
+
+\subsubsection{Metoda podjeli pa vladaj}
+\begin{enumerate}[\indent K1:\quad]
+  \item Zadana su dva krajnja slikovna elementa kao krajnje točke granice. Povuci liniju između te dvije točke.
+  \item Za svaki slikovni element koji je rubni element i nalazi se u području granice izračunajte pravokutne udaljenosti do linije. Ako su sve te udaljenosti manje od unaprijed zadanog praga -- algoritam završava.
+  \item Slikovni element -- rubni element čija je udaljenost najveća i premašuje prag postaje \emph{prijelomna točka}. Zamjeni prijašnji linijski segment s novim linijskim segmentom.
+  \item Postupak se rekurzivno provodi za nove segmente.
+\end{enumerate}
+
+\subsubsection{Parametarski prostor}
+Jednadžba pravca u parametarskom prostoru (prostor $\varrho$-$\theta$):
+$$x\cos \theta + y \sin \theta - \varrho = 0,$$
+pri čemu je $\varrho$ udaljenost pravca od ishodišta, a $\theta$ kut što ga $\varrho$ čini sa osi $x$.
+
+\subsubsection{Hughova metoda}
+\begin{enumerate}[\indent K1:\quad]
+  \item Kvantiziraj parametarski prostor između minimalnih i maksimalnih vrijednosti $\varrho$ i $\theta$.
+  \item Oblikuj polje brojila $C(\varrho,\theta)$ i inicijaliziraj vrijednost brojila na 0. Svako brojilo odgovara jednoj ćeliji kvantiziranog parametarskog prostora.
+  \item Za svaki slikovni element $(x,y)$ u slici koja je dobivena uporabom rubnog operatora povećaj za 1 sva brojila u polju brojila uzduž krivulje u parametarskom prostoru. Krivulja u parametarskom prostoru predstavlja porodicu krivulja koja se u prostoru $x$-$y$ može povući u tom slikovnim elementu.
+  \item Lokalni maksimum vrijednosti brojila u polju brojila odgovara slikovnim elementima koji u izvornoj slici leže na traženoj krivulji. Vrijednosti brojila daju broj slikovnih elemenata na krivulji u izvornoj slici.
+\end{enumerate}
+
+\subsubsection{Poopćeni Hughov algoritam}
+\begin{itemize}
+  \item Izaberimo neku točku $(x_c,y_c)$ u silueti i proglasimo je referentnom točkom.
+  \item Povucimo dužinu između $C$ i nekog graničnog slikovnog elementa $(x,y)$.
+  \item U tom slikovnom elementu izračunajmo smjer gradijenta.
+  \item Koordinate referentne točke mogu se izraziti kao funkcija smjera gradijenta i koordinata graničnog slikovnog elementa:
+  \begin{align*}
+    x_c = x+r(\theta_i)\cos[\alpha_i(\theta_i)],\\
+    y_c = y+r(\theta_i)\sin[\alpha_i(\theta_i)],
+  \end{align*}
+  pri čemu je $r$ udaljenost referentne točke i graničnog elementa, $\alpha_i$ kut koji tvori $r$ s osi $x$.
+  \item Za poznati oblik siluete, orijentaciju i veličinu objekta, neposredno prije traženja računamo tablicu $\mathbf R$ koja ima vrijednosti:
+  \begin{itemize}
+    \item Smjer gradijenta u svim slikovnim elementima na granici objekta (poznatog oblika siluete).
+    \item Smjeru gradijenta pridruženi parovi $(r,\alpha)$.
+  \end{itemize}
+  Primjer tablice:
+  \begin{center}
+    \begin{tabular}{cc}
+      \toprule
+      Smjer gradijenta & Parovi $\mathbf r = (r,\alpha)$\\
+      \midrule
+      $\theta_1$ & $r_1^1$, $r_2^1$, $\ldots$, $r_{n_1}^1$\\
+      $\theta_2$ & $r_1^2$, $r_2^2$, $\ldots$, $r_{n_2}^2$\\
+      $\vdots$ & $\vdots$\\
+      $\theta_m$ & $r_1^m$, $r_2^m$, $\ldots$, $r_{n_m}^m$\\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+\end{itemize}
+
+
+\begin{enumerate}[\indent K1:\quad]
+  \item Formirajte tablicu $\mathbf R$ za oblik koji se traži.
+  \item Oblikujte polje brojila $C(x_{c_{min}}:x_{c_{max}}:y_{c_{min}}:y_{c_{max}})$ koje odgovaraju mogućim lokacijama referentne točke. Inicijalizirajte vrijednosti brojila na 0.
+  \item Za svaki rubni element u slici:
+  \begin{enumerate}[\indent \indent (a)]
+    \item Izračunajte smjer gradijenta $\theta$.
+    \item Izračunajte moguće koordinate referentne točke. Izračunati smjer gradijenta u koraku (a) određuje redak tablice $\mathbf R$ iz kojeg se uzimaju vrijednosti parova $r$ i $\alpha$:
+    \begin{align*}
+      x_c = x+r(\theta)\cos[\alpha(\theta)],\\
+      y_c = y+r(\theta)\sin[\alpha(\theta)].
+    \end{align*}
+    \item Povećajte vrijednost brojila u polju brojila za 1:
+    $$C(x_c,y_c) = C(x_c,y_c)+1$$
+  \end{enumerate}
+  \item Moguće lokacije traženog oblika u slici su određene maksimumima u polju $C$.
+\end{enumerate}
+
+\end{document}
