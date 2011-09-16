@@ -10,3 +10,31 @@ i slično.
 
 Repozitorij je otvoren za sve! (samo, molim Vas, nemojte pretjerivati sa binarnim datotekama)
 
+Rad s Gitom i GitHubom
+======================
+Ako želite doprinjeti materijalima u repozitoriju, to možete napraviti na dva način:
+- ako ste "collaborator" (admin repozitorija ručno dodaje collaboratore), direktnim doprinosom u repozitorij;
+- inače, slanjem "Pull requesta".
+
+Pull request se radi na sljedeći način:
+1) Morate imati GitHub account.
+2) Morate imati podešen git (upute su na: http://help.github.com/set-up-git-redirect).
+3) Napravite "fork" fer-materijali repozitorija (imate gumb "Fork" na GitHub stranici repozitorija).
+4) Napravite "clone" forkanog repozitorija.
+5) Uđite u direktorij s repozitorijem (na Vašem disku):
+  cd fer-materijali
+6) Izvedite sljedeće dvije naredbe:
+  git remote add upstream https://github.com/ivan444/fer-materijali.git
+  git fetch upstream
+7) Napravite promjene koje želite i to commitajte u lokalni repozitorij:
+  git commit -a -m "Neke promjene"
+8) Pošaljite promjene u forkani repozitorij:
+  git push origin master
+9) S GitHub stranice forkanog repozitorija kliknite na gumb "Pull Request" i sljedite korake.
+Nakon toga, admin glavnog repozitorija će odlučiti hoće li te promjene ubaciti u glavni repozitorij ili ne. Korake 1-6 je dovoljno samo jednom napraviti dok korake 7-9 možete ponavljati kad god imate nešto za doprinjeti u glavni repozitorij.
+  
+NAPOMENA: Ako se glavni repozitorij (ivan444/fer-materijali) u međuvremenu promjeni, te promjene u Vaš lokalni repozitorij možete dohvatiti naredbama:
+  git fetch upstream
+  git merge upstream/master
+
+Detaljnije možete pročitati na http://help.github.com/fork-a-repo/ i http://help.github.com/send-pull-requests/ .
