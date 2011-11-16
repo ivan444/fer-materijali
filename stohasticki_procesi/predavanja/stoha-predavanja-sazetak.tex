@@ -8,7 +8,7 @@
 \usepackage{amssymb}
 %\usepackage{times}
 \usepackage{lmodern}
-%\usepackage[a4paper, left=0.5cm, right=0.5cm, bottom=2cm, top=0.5cm]{geometry}
+\usepackage[a4paper, left=0.5cm, right=0.5cm, bottom=2cm, top=0.5cm]{geometry}
 \usepackage{enumerate}
 
 \begin{document}
@@ -63,7 +63,116 @@ $$p_{n_1,n_2,\ldots,n_r}=\frac{n!}{n_1!n_2!\cdots n_r!} \cdot p_1^{n_1} p_2^{n_2
 Funkcija izvodnica:
 $$\psi(u_1,u_2,\ldots,u_r) = (p_1u_1+\cdots+p_ru_r)^n.$$
 
-\subsection{Neki razvoji}
+\subsection{Neke sume}
+\begin{align*}
+  &\sum_{n=0}^\infty \frac{a^n}{n!}  = e^a, \\
+  &\sum_{k=0}^n {n \choose k } p^k q^{n-k} = (p+q)^n,\\
+  &\sum_{n_1+n_2+\cdots+n_r=n} \frac{n!}{n_1!n_2!\cdots n_r!} \cdot p_1^{n_1}p_2^{n_2}\cdots p_r^{n_r} = (p_1+p_2+\cdots+p_r)^n,\\
+  &\sum_{n=0}^\infty x^n = \frac{1}{1-x}, \quad |x| < 1,\\
+  &\sum_{k=0}^\infty (k+1)x^k = \frac{1}{(1-x)^2},\\
+  &\sum_{k=0}^\infty (-1)^k {n+k-1 \choose k } x^k = (1+x)^{-n}, \quad \text{jer vrijedi: }
+  {-n \choose k} = (-1)^k{n+k-1 \choose k}.
+\end{align*}
 
+\section{Slučajno pomicanje}
+Slučajno pomicanje je niz nezavisnih slučajnih varijabli:
+$$\mathbf X_0 = x_0, \quad \mathbf X_n = x_0 + \mathbf Y_1 + \mathbf Y_2 +\cdots + \mathbf Y_n, \quad n \geq 1,$$
+pri čemu je
+$$\mathbf Y_n \sim \left( \begin{array}{lr}
+-1 & 1\\
+q_n & p_n
+\end{array} \right),
+\quad p_n+q_n = 1.$$
+
+\subsection{Vjerojatnost gubitka}
+Vjerojatnost gubitka ako se kreće s $n$ žetona. Rubni slučajevi: pobjeda -- skupljanje $s$ žetona; gubitak -- gubljenje svih žetona. Vjerojatnost pobjede u jednoj igri je $p$, a gubitka $q$ ($q = 1-p$). Vrijedi:
+\begin{align*}
+a_n &= pa_{n+1}+qa_{n-1}, \quad n=1, 2, \ldots, s-1\\
+a_n &= \lambda^n\\
+\lambda^n &= p\lambda^{n+1}+q\lambda^{n-1}\\
+\lambda &= p\lambda^2 + q \; \Rightarrow \; \lambda_1 = 1,\; \lambda_2 = \frac{q}{p},\; q \neq p\\
+a_n &= C_1 + C_2 \left( \frac{q}{p} \right)^n,\; q \neq p,
+\end{align*}
+odnosno
+\begin{align*}
+a_n &= C_1 + C_2n,\; q = p,\; \lambda_1 = \lambda_2 = 1.
+\end{align*}
+Konstante $C_1$ i $C_2$ se dobivaju iz rubnih slučajeva.
+
+Za poopćeno slučajno pomicanje vrijedi:
+$$\mathbf Y_n \sim \left( \begin{array}{lcr}
+-1 & 0 & 1\\
+q_n & r_n & p_n
+\end{array} \right),
+\quad p_n+r_n+q_n = 1.$$
+\begin{align*}
+a_n &= pa_{n+1}+ra_n+qa_{n-1}, \quad n=1, 2, \ldots, s-1\\
+a_n(1-r) &= pa_{n+1}+qa_{n-1},\\
+a_n &= p'a_{n+1}+q'a_{n-1}, \quad p' = \frac{p}{1-r},\; q' = \frac{q}{1-r}.
+\end{align*}
+
+\subsection{Očekivano trajanje igre}
+\begin{align*}
+d_n &= p(d_{n+1}+1)+q(d_{n-1}+1), \quad n=1, 2, \ldots, s-1\\
+d_n &= pd_{n+1}+qd_{n-1} + 1.
+\end{align*}
+Homogena:
+\begin{align*}
+d_n &= pd_{n+1}+qd_{n-1},\\
+0 &= \lambda^2p - \lambda + q.
+\end{align*}
+Partikularna:
+\begin{align*}
+d_n &= \alpha n,\; p \neq q \quad (\text{odnosno: } d_n =Cn^2,\; p=q)\\
+0 &= \lambda^2p - \lambda + q,\\
+p\alpha(n+1) &= \alpha n - q\alpha(n-1)-1,
+\end{align*}
+uvrštavanjem rubnih slučajeva, dobiva se:
+$$\alpha = \frac{1}{q-p}.$$
+Rješenje je:
+$$d_n = d_H + d_P,$$
+za $p \neq q$ vrijedi:
+$$d_n = C_1 + C_2\left ( \frac{q}{p}\right)^n + \frac{n}{q-p}.$$
+
+\section{Markovljevi lanci}
+Lanac $\mathbf X_1, \mathbf X_2, \ldots$ je markovljev ako za sve izbore stanja $i_1, i_2, \ldots, i_n$ vrijedi:
+$$P\left(\mathbf X_{n+1} = i_{n+1} \;|\; \mathbf X_n = i_n, \ldots, \mathbf X_0 = i_0\right) = P\left(\mathbf X_{n+1} = i_{n+1} \;|\; \mathbf X_n = i_n\right).$$
+
+\subsection{Matrica prijelaznih vrijednosti}
+$\Pi$ je matrica prijelaznih vrijednosti, te vrijedi:
+\begin{align*}
+\Pi &= (p_{ij}),\\
+p_{ij} &= P\left(\mathbf X_{n+1} = j \;|\; \mathbf X_n = i\right).
+\end{align*}
+Svojstvo homogenosti: $p_{ij}  = P(\mathbf X_{n+1} = j \;|\; \mathbf X_n = i)= P(\mathbf X_1 = j \;|\; \mathbf X_0 = i)$.
+
+\subsection{Jednadžba markovljevog lanca}
+$$p(n) = p(0)\Pi^n,$$
+također vrijedi:
+$$p(n) = p(n-1)\Pi.$$
+Vektor $p(0)$ je vektor početnih stanja, odnosno razdioba slučajne varijable $\mathbf X_0$.
+
+\subsection{Ergodički teorem}
+Ako postoji $n$ za koji su svi elementi $\Pi^n$ pozitivni tada za svaki $j$ postoji:
+$$\pi_j = \lim_{n \rightarrow \infty} p_{ij}(n).$$
+
+\subsection{Stacionarne vjerojatnosti}
+Određuju vjerojatnost da će u nekom dalekom trenutku lanac biti u nekom određenom stanju. Mogu se interpretirati kao prosječni dio vremena koje lanac provodi u nekom stanju. Vrijedi:
+\begin{align*}
+\Pi^\top\pi &= \pi \quad \Rightarrow \quad \left( \mathbf I - \Pi^\top \right) = \mathbf 0,\\
+\sum_j \pi_j &= 1
+\end{align*}
+
+\subsection{Klasifikacija stanja}
+\begin{itemize}
+  \item Stanje $j$ je dostižno iz $i$ ($i \rightarrow j$) ako se u $n$ koraka može doći iz $i$ u $j$.
+  \item Stanje $i$ je bitno ako za svaki $j$ za koji vrijedi $i \rightarrow j$ također vrijedi $j \rightarrow i$ (kraće: $i \leftrightarrow j$).
+  \item $H$ je bitni skup, te vrijedi:
+  \begin{itemize}
+    \item $\forall i \in H$, $i$ je bitan.
+    \item $\forall i,j \in H$ vrijedi $i \leftrightarrow j$.
+    \item Ako $i \in H$ te $j \not\in H$ vrijedi $i \not\rightarrow j$.
+  \end{itemize}
+\end{itemize}
 
 \end{document}
