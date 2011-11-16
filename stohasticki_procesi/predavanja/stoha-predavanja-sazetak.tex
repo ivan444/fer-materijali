@@ -1,0 +1,69 @@
+\documentclass[12pt,english]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[croatian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{times}
+\usepackage{lmodern}
+%\usepackage[a4paper, left=0.5cm, right=0.5cm, bottom=2cm, top=0.5cm]{geometry}
+\usepackage{enumerate}
+
+\begin{document}
+\title{Stohastički procesi}
+\date{}
+\maketitle
+
+\section{Funkcije izvodnice}
+Funkcija izvodnica slučajne varijable $\mathbf X$:
+$$\psi_\mathbf{X}(z) = \mathbb{E} (z^\mathbf X) =
+\sum_{n=0}^\infty p_n z^n, \quad p_n = P(\mathbf X = n)$$
+
+\subsection{Neke razdiobe i funkcije izvodnice}
+\begin{description}
+  \item[Geometrijska] (vrijeme do prve realizacije događaja)
+  $$\mathbf X \sim \mathcal G(p), \quad p_k = P(\mathbf X = k) = pq^{k-1}, \quad q = 1-p.$$
+  Izvodnica: $\psi(z) = \frac{p}{1-qz}$.
+
+  \item[Binomna] (broj realizacija u $n$ pokusa)
+  $$\mathbf X \sim \mathcal B(n,p), \quad p_k = P(\mathbf X = k) = {n \choose k}p^k q^{n-k}, \quad q = 1-p.$$
+  Izvodnica: $\psi(z) = (pz+q)^n$.
+
+  \item[Poissonova] (broj realizacija u nekom vremenu)
+  $$\mathbf X \sim \mathcal P(\lambda), \quad p_k = P(\mathbf X = k) = \frac{\lambda^k}{k!} e^{-\lambda}.$$
+  Izvodnica: $\psi(z) = e^{\lambda (z-1)}$.
+
+\end{description}
+
+\subsection{Očekivanje i disperzija}
+Očekivanje:
+$$\psi_\mathbf X'(1) = \mathbb E(\mathbf X)$$
+Izvod:
+$$\psi'(z) = \sum_{n=0}^\infty n z ^{n-1}p_n,$$
+za $n \geq 1$ i $z = 1$ vrijedi:
+$$\psi'(1) = \sum_{n=1}^\infty n p_n = \mathbb E(\mathbf X).$$
+Disperzija:
+$$\mathbb D(X) = \mathbb E(\mathbf X^2) - \mathbb E(\mathbf X)^2 = \psi''(1)+\psi'(1)-\psi'(1)^2.$$
+
+\subsection{Suma slučajnih varijabli}
+Ako je $\mathbf S = \mathbf X_1 + \mathbf X_2 + \ldots + \mathbf X_n$, tada vrijedi:
+$$\psi_\mathbf S (z) = \psi_{\mathbf X_1}(z) \cdot \psi_{\mathbf X_2}(z) \cdots \psi_{\mathbf X_n}(z).$$
+Izvod (kraći):
+$$\mathbb E(z^{\mathbf X + \mathbf Y}) = \mathbb E (z^\mathbf X \cdot z^\mathbf Y) = \mathbb E(z^\mathbf X) \cdot \mathbb E(z^\mathbf Y).$$
+
+\subsection{Slučajni zbroj slučajnih varijabli}
+Ako je $\mathbf S = \mathbf X_1 + \mathbf X_2 + \cdots + \mathbf X_{\mathbf N}$, pri čemu je $\mathbf N$ slučajna varijabla, a $\mathbf X_i$ slučajne varijable jednake razdiobe, tada vrijedi:
+$$\psi_{\mathbf S}(z) = \psi_{\mathbf N}(\psi_{\mathbf X}(z)).$$
+
+\subsection{Polinomijalna razdioba}
+Imamo niz od $n$ nezavisnih pokusa. U svakom pokusu se može ostvariti jedan od disjunktnih događaja $A_1, A_2, \ldots, A_r$. Vjerojatnost da se $A_1$ ostvario $n_1$ put, $A_2$ $n_2$ puta, \ldots, $A_r$ $n_r$ puta ($n_1+n_2+\cdots+n_r=n$) dana je sa:
+$$p_{n_1,n_2,\ldots,n_r}=\frac{n!}{n_1!n_2!\cdots n_r!} \cdot p_1^{n_1} p_2^{n_2} \cdots p_r^{n_r}.$$
+Funkcija izvodnica:
+$$\psi(u_1,u_2,\ldots,u_r) = (p_1u_1+\cdots+p_ru_r)^n.$$
+
+\subsection{Neki razvoji}
+
+
+\end{document}
