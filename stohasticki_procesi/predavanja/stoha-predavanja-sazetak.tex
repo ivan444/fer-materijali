@@ -193,8 +193,6 @@ Slučajna varijabla je preslikavanje $\mathbf X : \Omega \rightarrow \mathbb R$.
 
 Trajektorija je funkcija realne verijable $t \mapsto \mathbf X(t,\omega)$ pri čemu je događaj $\omega \in \Omega$ fiksan.
 
-Trajektorija je funkcija realne verijable $t \mapsto \mathbf X(t,\omega)$ pri čemu je događaj $\omega \in \Omega$ fiksan.
-
 \subsection{Markovljevi procesi}
 $\mathbf X$ je Markovljev proces ako za sve $t_1 < t_2 < \ldots < t_n < t$ vrijedi:
 $$P(a<\mathbf X_t < b \;\vert\; \mathbf X_{t_1} = x_1, \mathbf X_{t_2} = x_2, \ldots, \mathbf X_{t_n} = x_n) = P(a < \mathbf X_t < b \;\vert\; \mathbf X_{t_n} = x_n).$$
@@ -240,7 +238,7 @@ $\mathbf N(s,t)$ je slučajna varijabla koja mjeri broj realizacija događaja $A
       \item \emph{Homogenost u vremenu.} $\mathbf N(s,t)$ ovisi samo o duljini intervala $t-s$.
       \item \emph{Regularnost.} U intervalu infinitezimalne duljine $h$, vjerojatnost pojave samo jednog događaja je $\lambda h + o(h)$, a više od jednog događaja $o(h)$.\footnote{Parametar $\lambda$ opisuje \emph{gustoću realizacija} događaja $A$, a za $o(h)$ vrijedi: $\lim\limits_{h\rightarrow 0} \frac{o(h)}{h} = 0$.}
     \end{enumerate}
-  Vrijedi: $\mathbf N(s,t) \sim \mathbf N(s+h,t+h)$, $\forall h$. Za $h=-s$: $\mathbf N(s,t) \sim \mathbf N(0,t-s) \mapsto \mathbf N_t$.
+  Vrijedi: $\mathbf N(s,t) \sim \mathbf N(s+h,t+h)$, $\forall h$. Za $h=-s$: $\mathbf N(s,t) \sim \mathbf N(0,t-s) \mapsto \mathbf N_{t-s}$.
 
   Za $t>s$ vrijedi:
   $\N_t - \N_s = \N(0,t) - \N(0,s) \sim \N(0,s)+\N(s,t)-\N(0,s) = \N(s,t).$
@@ -312,7 +310,7 @@ a_{ij} &= 0\quad \text{za}\; j\neq i, i+1. \nonumber
 \subsubsection{Izvod}
 $$\MP(t+s)=\MP(t)\MP(s),$$
 za elemente vrijedi:
-$$p_{ij}(t+s) = \sum\limits_k p_{ik}(t)q_{kj}(s).$$
+$$p_{ij}(t+s) = \sum\limits_k p_{ik}(t)p_{kj}(s).$$
 Označimo $a_{ij}:=p_{ij}'(0)$, te definirajmo matricu $\A := (a_{ij})$. Derivirajmo:
 $$\frac{\partial}{\partial s}p_{ij}(t+s) = \sum\limits_k p_{ik}(t)\frac{\mathrm d}{\mathrm ds}p_{kj}(s).$$
 Za $s=0$:
@@ -332,7 +330,7 @@ $$\MP'(t)=\A\MP(t).$$
   $$\X(t) = \frac{1}{2\pi}\int\limits_{-\infty}^\infty \hat\X(u)e^{iut}\di u.$$
   \item $\hat \X$ zahtjeva svojstvo \emph{aposolutne integrabilnosti}.
   \item[Odrezani proces:]
-  $$\X_T(t= \left\{
+  $$\X_T(t)= \left\{
     \begin{array}{ll}
     \X(t), & -T < t < T,\\
     0, & \text{inače}.
