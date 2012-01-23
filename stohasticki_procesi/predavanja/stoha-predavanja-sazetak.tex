@@ -256,7 +256,7 @@ $\mathbf N(s,t)$ je slučajna varijabla koja mjeri broj realizacija događaja $A
   \item[Uvjetne vjerojatnosti za Poissonov proces:] Neka je $s<t$. Za Poissonov proces vrijedi:
   $$P(\N_t = j\; \vert \; \N_s = i) = \frac{\left[\lambda(t-s)\right]^{j-i}}{(j-i)!}\cdot e^{-\lambda(t-s)}.$$
 
-  \item[Konstrukcija Poissonovog procesa pomoću eksponencijalnih razdioba.] Neka je $(\zeta_n)$ niz nezavisnih slučajnih varijabli s eksponencijalnom razdiobom $\varepsilon(\lambda)$, koje bilježe vrijeme između uzastopnih pojavljivanja događaja $A$. Tad brojač $\N_t$ pojavljivanja događaja $A$ čini Poissonov proces s parametrom $\lambda$.
+  \item[Konstrukcija Poissonovog procesa pomoću eksponencijalnih razdioba.] Neka je $(\zeta_n)$ niz nezavisnih slučajnih varijabli s eksponencijalnom razdiobom $\mathcal E(\lambda)$, koje bilježe vrijeme između uzastopnih pojavljivanja događaja $A$. Tad brojač $\N_t$ pojavljivanja događaja $A$ čini Poissonov proces s parametrom $\lambda$.
 
   \item[Zbroj Poissonovih procesa.] Zbroj dvaju nezavisnih Poissonovih procesa $\N_1$ i $\N_2$ s parametrima $\lambda_1$ i $\lambda_2$ je Poissonov proces s parametrom $\lambda_1 + \lambda_2$.
 
@@ -298,7 +298,7 @@ $$\MP^{[s,u]} = \MP^{[s,t]}\MP^{[t,u]},\quad s \leq t \leq u.$$
 $$P(t+s) = \MP^{[0,t+s]}=\MP^{[0,t]}\cdot \MP^{[t,t+s]}=\MP(t)\MP(t+s-t)=\MP(t)\MP(s).$$
 
 \noindent Matrica \emph{gustoća prijelaza} $\A := (a_{ij})$, $a_{ij}:=p_{ij}'(0)$. Za \emph{prijelazne gustoće Poissonovog procesa} vrijedi:
-$$p_{ij}(t)=\frac{\lambda t)^{j-i}}{(j-i)!}\cdot e^{-\lambda t}.$$
+$$p_{ij}(t)=\frac{(\lambda t)^{j-i}}{(j-i)!}\cdot e^{-\lambda t}.$$
 Iz toga i $a_{ij} = p_{ij}'(0)$ dobivamo:
 \begin{align}
 a_{ii} &= -\lambda, \nonumber \\
