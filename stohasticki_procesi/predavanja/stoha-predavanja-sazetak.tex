@@ -16,7 +16,9 @@
 \newcommand{\A}{\mathbf A}
 \newcommand{\MP}{\mathbf P}
 \newcommand{\E}{\mathbb E}
+\newcommand{\En}{\mathbf E}
 \newcommand{\vertS}{\; \vert \;}
+\newcommand{\di}{\mathrm d}
 
 \begin{document}
 \title{Stohastički procesi}
@@ -319,4 +321,69 @@ Rezultat je matrična jednadžba -- \emph{Kolmogorovljeva jednadžba unaprijed}:
 $$\MP'(t)=\MP(t)\A.$$
 Da smo krenuli s deriviranjem po $t$, dobili bi \emph{Kolmogorovljevu jedbadžbu unazad}:
 $$\MP'(t)=\A\MP(t).$$
+
+
+\section{Korelacijska teorija stohastičkih procesa}
+\begin{description}
+  \item[Spektar od $\hat \X (u)$:]
+  $$\hat \X (u) := \int\limits_{-\infty}^\infty \X(t)e^{-iut}\di t.$$
+  $\hat \X$ je Fourierov transformat.
+  \item[Inverz:]
+  $$\X(t) = \frac{1}{2\pi}\int\limits_{-\infty}^\infty \hat\X(u)e^{iut}\di u.$$
+  \item $\hat \X$ zahtjeva svojstvo \emph{aposolutne integrabilnosti}.
+  \item[Odrezani proces:]
+  $$\X_T(t= \left\{
+    \begin{array}{ll}
+    \X(t), & -T < t < T,\\
+    0, & \text{inače}.
+    \end{array}
+    \right.$$
+
+  \item[Energija:]
+  $$\En(T) = \int\limits_{-T}^T \X(t)^2\di t.$$
+  Po Parsevalu:
+  $$\En(T) = \frac{1}{2\pi}\int\limits_{-\infty}^\infty \vert \hat\X_T(u)\vert ^2\di u.$$
+
+  \item[Snaga:]
+  $$\MP(T) =  \frac{1}{2T}\int\limits_{-T}^T \X(t)^2\di t
+  = \frac{1}{2\pi}\int\limits_{-\infty}^\infty \frac{\vert \hat\X_T(u)\vert ^2}{2T}\di u.$$
+
+  \item[Prosječna snaga procesa:]
+  $$\MP_{XX} = \lim\limits_{T\rightarrow \infty}\frac{1}{2T} \int\limits_{-T}^T \E\left[\X^2(t)\right]\di t = \frac{1}{2\pi}\int\limits_{-\infty}^\infty \lim\limits_{T\rightarrow \infty} \frac{\E\left[\vert\hat\X_T(u)\vert ^2\right]}{2T}\di u.$$
+
+  \item[Vremensko usrednjenje:]
+  $$\A[f(t)] = \lim\limits_{T\rightarrow \infty} \frac{1}{2T} \int\limits_{-T}^T f(t)\di t.$$
+  Znači:
+  $$\MP_{XX} = \A\left(\E[\X^2(t)]\right).$$
+
+  \item[Spektralna gustoća snage procesa:]
+  $$\mathbf S_{XX}(u) := \lim\limits_{T\rightarrow \infty} \frac{\E\left[\vert\hat\X_T(u)\vert^2\right]}{2T}.$$
+  Znači:
+  $$\MP_{XX} = \frac{1}{2\pi}\int\limits_{-\infty}^\infty \mathbf S_{XX}(u)\di u.$$
+  \item[Svojstva spektralne gustoće:] \hfill
+  \begin{enumerate}
+    \item $\mathbf S_{XX} \geq 0$,
+    \item $\mathbf S_{XX}(-u) = \mathbf S_{XX}(u)$, (ako je $\X(t)$ realan)
+    \item $\mathbf S_{XX}(u)$ je realna funkcija,
+    \item 
+    $$\frac{1}{2\pi}\int\limits_{-\infty}^\infty \mathbf S_{XX}(u)\di u = \A\left(\E\left[\X(t)^2\right]\right),$$
+    \item $\mathbf S_{XX}(u)$ i $\A[R_{XX}(t,t+\tau)]$ su par Fourierovih transformata. Vrijedi:
+    $$\A[R_{XX}(t,t+\tau)] = \frac{1}{2\pi}\int\limits_{-\infty}^\infty\mathbf S_{XX}(u)e^{iu\tau}\di u,$$
+    $$\mathbf S_{XX}(u) = \int\limits_{-\infty}^\infty\A[R_{XX}(t,t+\tau)] e^{-iu\tau}\di \tau.$$
+  \end{enumerate}
+  
+  \item Ako je proces stacionaran u širem smislu, onda je $R_{XX}(t,t+\tau)=R_{XX}(\tau)$, $\forall t$, pa je i vremensko usrednjenje $\A[R_{XX}(t,t+\tau)] = \A[R_{XX}(\tau)]$. Tada vrijedi:
+  $$\mathbf S_{XX}(u) = \int\limits_{-\infty}^\infty R_{XX}(\tau)e^{-iu\tau}\di \tau,$$
+  $$R_{XX}(\tau) = \frac{1}{2\pi}\int\limits_{-\infty}^\infty S_{XX}(u)e^{iu\tau}\di u.$$
+  $R_{XX}$ je parna funkcija, stoga je $\mathbf S_{XX}$ realna i može se zapisati u obliku \emph{kosinus transformacije}.
+
+  \item[Kosinus transformacije:]
+  \begin{align}
+  \mathbf S_{XX}(u) &= \int_{-\infty}^\infty R_{XX}(\tau)e^{-iu\tau}\di \tau \nonumber\\
+  &=\int_{-\infty}^\infty R_{XX}(\tau) [\cos u \tau - i \sin u\tau]\di \tau \nonumber\\
+  &=\int_{-\infty}^\infty R_{XX}(\tau)\cos u \tau \di \tau -  i\int_{-\infty}^\infty R_{XX}(\tau)\sin u \tau\di \tau \nonumber\\
+  &=2\int_{0}^\infty R_{XX}(\tau)\cos u \tau\di\tau \nonumber.
+  \end{align}
+\end{description}
+
 \end{document}
