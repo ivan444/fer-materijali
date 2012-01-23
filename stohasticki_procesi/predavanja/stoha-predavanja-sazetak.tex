@@ -11,6 +11,11 @@
 \usepackage[a4paper, left=0.5cm, right=0.5cm, bottom=2cm, top=0.5cm]{geometry}
 \usepackage{enumerate}
 
+\newcommand{\X}{\mathbf X}
+\newcommand{\N}{\mathbf N}
+\newcommand{\E}{\mathbb E}
+\newcommand{\vertS}{\; \vert \;}
+
 \begin{document}
 \title{Stohastički procesi}
 \date{}
@@ -174,5 +179,98 @@ Određuju vjerojatnost da će u nekom dalekom trenutku lanac biti u nekom određ
     \item Ako $i \in H$ te $j \not\in H$ vrijedi $i \not\rightarrow j$.
   \end{itemize}
 \end{itemize}
+
+\section{Stohastički procesi}
+Stohastički proces $\mathbf X$ je familija slučajnih varijabli $\mathbf X_t$:
+$$\mathbf X = \{\mathbf X_t, t \in T\},\quad \mathbf X : T \times \Omega \rightarrow S.$$
+$\mathbf X_t$ opisuje stanje procesa $\mathbf X$ u trenutku $t$, a $S$ je skup stanja unutar kojeg proces poprima vrijednosti ($S \subset \mathbb C$).
+
+Slučajna varijabla je preslikavanje $\mathbf X : \Omega \rightarrow \mathbb R$. Poprima vrijednost $\mathbf X(\omega)$ za svaku realizaciju elementarnog događaja $\omega$.
+
+Trajektorija je funkcija realne verijable $t \mapsto \mathbf X(t,\omega)$ pri čemu je događaj $\omega \in \Omega$ fiksan.
+
+Trajektorija je funkcija realne verijable $t \mapsto \mathbf X(t,\omega)$ pri čemu je događaj $\omega \in \Omega$ fiksan.
+
+\subsection{Markovljevi procesi}
+$\mathbf X$ je Markovljev proces ako za sve $t_1 < t_2 < \ldots < t_n < t$ vrijedi:
+$$P(a<\mathbf X_t < b \;\vert\; \mathbf X_{t_1} = x_1, \mathbf X_{t_2} = x_2, \ldots, \mathbf X_{t_n} = x_n) = P(a < \mathbf X_t < b \;\vert\; \mathbf X_{t_n} = x_n).$$
+
+\subsection{Procesi s nezavisnim prirastima}
+Za proces $\mathbf X$ kažemo da je proces s nezavisnim prirastima ako su za sve $t_1 < t_2 < \ldots < t_n$ slučajne varijable $\mathbf X_{t_2} - \mathbf X_{t_1}$, $\mathbf X_{t_3} - \mathbf X_{t_2}$, \ldots, $\mathbf X_{t_n} - \mathbf X_{t_{n-1}}$ nezavisne.
+
+\subsection{Stacionarni procesi}
+\begin{itemize}
+  \item $\mathbf X$ je stacionaran u \emph{užem} smislu ako za svaki $h$ slučajni vektori $\left( \mathbf X_{t_1}, \mathbf X_{t_2}, \ldots, \mathbf X_{t_n}\right)$ i  $\left( \mathbf X_{t_1+h}, \mathbf X_{t_2+h}, \ldots, \mathbf X_{t_n+h}\right)$ imaju jednaku razdiobu. To su procesi čije su konačnodimenzionalne razdiobe invarijantne na pomake u vremenu.
+
+  \item $\mathbf X$ je stacionaran u \emph{širem} smislu ako vrijedi:
+  \begin{enumerate}
+    \item očekivanje je konstantno: $m(t) = \text{const}$,
+    \item korelacijska funkcija $R(s,t)$ ovisi samo o razlici vremena $t-s$.
+  \end{enumerate}
+\end{itemize}
+
+\subsection{Svojstva stohastičkih procesa}
+\begin{description}
+  \item[Moment prvog reda:]
+  $$m(t) := \mathbb E\left[ \mathbf X_t\right] = \int_{-\infty}^\infty xf_t(x)\mathrm{d}x.$$
+  \item[Korelacijska funkcija:]
+  $$R(t,s) := \mathbb E\left[\mathbf X_t \mathbf X_s\right] = \int_{-\infty}^\infty \int_{-\infty}^\infty x_1x_2f_{t,s}(x_1,x_2)\mathrm dx_1\mathrm dx_2.$$
+  \item[Kovarijacijska funkcija:]
+  $$C(t,s) := \mathbb E\left[(\mathbf X_t - m(t))(\mathbf X_s-m(s))\right] = \mathbb E\left[\mathbf X_t\mathbf X_s\right] -m(t)m(s) = R(t,s)-m(t)m(s).$$
+  \item[Disperzija slučajne varijable $\mathbf X_t$:]
+  $$\mathbb D\left[\mathbf X_t\right] = \mathbb E\left[\mathbf X_t^2\right] - m(t)^2 = R(t,t) - m(t)^2.$$
+\end{description}
+Ako je $\mathbf X$ stacionaran u \emph{užem} smislu, onda vrijedi:
+  $$m(t+h) := \mathbb E\left[ \mathbf X_{t+h}\right] = \int_{-\infty}^\infty xf_{t+h}(x)\mathrm{d}x = \int_{-\infty}^\infty xf_{t}(x)\mathrm{d}x = \mathbb E\left[\mathbf X_t\right] = m(t).$$
+Za stacionarni proces također vrijedi:
+$$R(t+h,s+h) := \mathbb E\left[\mathbf X_{t+h} \mathbf X_{s+h}\right] = \mathbb E\left[\mathbf X_t \mathbf X_s\right] = R(t,s).$$
+
+\section{Poissonov proces}
+Registrira broj realizacija fogađaja $A$ i trenutke u kojima se događaj zbio.
+$\mathbf N(s,t)$ je slučajna varijabla koja mjeri broj realizacija događaja $A$ u intervalu $[s,t]$.
+
+\begin{description}
+  \item[Svojstva:]\hfill
+    \begin{enumerate}
+      \item \emph{Odsustvo pamćenja.} $\mathbf N(s,t)$ ne ovisi o pojavljivanju događaja $A$ prije trenutka $s$.
+      \item \emph{Homogenost u vremenu.} $\mathbf N(s,t)$ ovisi samo o duljini intervala $t-s$.
+      \item \emph{Regularnost.} U intervalu infinitezimalne duljine $h$, vjerojatnost pojave samo jednog događaja je $\lambda h + o(h)$, a više od jednog događaja $o(h)$.\footnote{Parametar $\lambda$ opisuje \emph{gustoću realizacija} događaja $A$, a za $o(h)$ vrijedi: $\lim\limits_{h\rightarrow 0} \frac{o(h)}{h} = 0$.}
+    \end{enumerate}
+  Vrijedi: $\mathbf N(s,t) \sim \mathbf N(s+h,t+h)$, $\forall h$. Za $h=-s$: $\mathbf N(s,t) \sim \mathbf N(0,t-s) \mapsto \mathbf N_t$.
+
+  Za $t>s$ vrijedi:
+  $\N_t - \N_s = \N(0,t) - \N(0,s) \sim \N(0,s)+\N(s,t)-\N(0,s) = \N(s,t).$
+
+  \item[Jednodimenzionalne razdiobe Poissonovog procesa:]
+  $$p_n(t) = \frac{(\lambda t)^n}{n!}\cdot e^{-\lambda t}, \quad n = 0,1,2,\ldots$$
+  \item[Poissonov proces] $\left\{ \N_t, t \geq 0\right\}$ zadan je uvjetima:
+  \begin{enumerate}
+    \item $\N_0 = 0$.
+    \item $\N$ ima nezavisne priraste.
+    \item Slučajna varijabla $\N_t-\N_s$, $0 \leq s < t$, ima Poissonovu razdiobu s parametrom $\lambda(t-s)$, tj.:
+    $$P\left\{\N_t-\N_s = k\right\} = \frac{\left[ \lambda(t-s)\right]^k}{k!}\cdot e^{-\lambda (t-s)}.$$
+  \end{enumerate}
+
+  \item[Uvjetne vjerojatnosti za Poissonov proces:] Neka je $s<t$. Za Poissonov proces vrijedi:
+  $$P(\N_t = j\; \vert \; \N_s = i) = \frac{\left[\lambda(t-s)\right]^{j-i}}{(j-i)!}\cdot e^{-\lambda(t-s)}.$$
+
+  \item[Konstrukcija Poissonovog procesa pomoću eksponencijalnih razdioba.] Neka je $(\zeta_n)$ niz nezavisnih slučajnih varijabli s eksponencijalnom razdiobom $\varepsilon(\lambda)$, koje bilježe vrijeme između uzastopnih pojavljivanja događaja $A$. Tad brojač $\N_t$ pojavljivanja događaja $A$ čini Poissonov proces s parametrom $\lambda$.
+
+  \item[Zbroj Poissonovih procesa.] Zbroj dvaju nezavisnih Poissonovih procesa $\N_1$ i $\N_2$ s parametrima $\lambda_1$ i $\lambda_2$ je Poissonov proces s parametrom $\lambda_1 + \lambda_2$.
+
+  \item[Poissonov proces i binomna razdioba.] Ako je $\N$ Poissonov proces te $s<t$, onda vrijedi:
+  $$P(\N_s=k \vertS \N_t=n) = {n \choose k}p^k(1-p)^{n-k},\quad k=0,1,\ldots,n.$$
+  
+  \item Ako su $\N_1$ i $\N_2$ nezavisni Poissonovi procesi s parametrima $\lambda_1$ i $\lambda_2$, onda je
+  $$P(\N_1(t) = k \vertS \N_1(t) + \N_2(t) = n) = {n \choose k}p^k(1-p)^{n-k},$$
+  pri čemu je $p=\lambda_1/(\lambda_1+\lambda_2)$.
+
+  \item[Poissonov proces i geometrijska razdioba.] Promatramo dva nezavisna niza događaja, $A$ i $B$ koji se pojavljuju u skladu s Poissonovim procesima s parametrima $at$, odnosno $bt$. Neka je $\N$ broj pojavljivanja događaja $A$ između dvije uzastopne realizacije događaja $B$. Onda $\N$ ima geometrijsku razdiobu.
+
+  Vrijeme $\zeta$ između dvije uzastopne realizacije događaja $B$ ima eksponencijalnu razdiobu s gustoćom $f(x)=be^{-bx}$. Vjerojatnost da se unutar intervala $[0,t]$ događaj $A$ pojavi $k$ puta je
+  $$\frac{e^{-at}(at)^k}{k!}.$$
+  Zato je
+  $$P(\N=k) = \frac{b}{a+b}\left(\frac{a}{a+b}\right)^k, \quad k=0,1,2,3,\ldots$$
+\end{description}
 
 \end{document}
