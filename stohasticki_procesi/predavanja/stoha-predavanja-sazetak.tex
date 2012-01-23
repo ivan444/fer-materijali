@@ -13,6 +13,8 @@
 
 \newcommand{\X}{\mathbf X}
 \newcommand{\N}{\mathbf N}
+\newcommand{\A}{\mathbf A}
+\newcommand{\MP}{\mathbf P}
 \newcommand{\E}{\mathbb E}
 \newcommand{\vertS}{\; \vert \;}
 
@@ -273,4 +275,48 @@ $\mathbf N(s,t)$ je slučajna varijabla koja mjeri broj realizacija događaja $A
   $$P(\N=k) = \frac{b}{a+b}\left(\frac{a}{a+b}\right)^k, \quad k=0,1,2,3,\ldots$$
 \end{description}
 
+\subsection{Markovljev proces}
+Za slučajan proces $\X$ s vrijednostima u diskretnom skupu $S$ kažemo da je Markovljev proces, ako za sve $t_0 < t_1 < \ldots < t_n$ ima svojstvo
+$$P(\X_{t_{n+1}} = x_{n+1} \vertS \X_{t_n}=x_n,\X_{t_{n-1}} = x_{n-1}, \ldots, \X_{t_0} = x_0) = P(\X_{t_{n+1}} = x_{n+1} \vertS \X_{t_n} = x_n).$$
+Ako proces $\X$ ima nezavisne priraste, onda je on Markovljev proces.
+
+\begin{description}
+  \item[Vjerojatnost prijelaza:]
+  $$P(\X_t=x_j \vertS \X_s = x_i)=: p(s,x_i,t,x_j) =: p_{ij}^{[s,t]}.$$
+  \item[Prijelazna vjerojatnost:] $p_{ij}^{[s,t]}$ je vjerojatnost da se čestica u trenutku $t$ nađe u stanju $x_j$, ako je u trenutku $s$ bila u stanju $x_i$.
+  \item[Matrica prijelaznih vjerojatnosti (matrica prijelaza):]
+  $$\MP^{[s,t]} := \left(p_{ij}^{[s,t]}\right).$$
+  \item[Konzervativan proces:] proces se ne može ``izgubiti,'' već se uvijek nalazi u jednom od predviđenih stanja, tj.:
+  $$\sum\limits_{j=1}^\infty p_{ij}^{[s,t]} = 1, \quad \forall i.$$
+\end{description}
+
+\subsection{Chapman-Kolmogorovljeva jednadžba}
+Neka je $\MP^{[s,t]}$ matrica prijelaznih vjerojatnosti Markovljevog procesa. Tada ona zadovoljava Chapman-Kolmogorovljevu jedbadžbu
+$$\MP^{[s,u]} = \MP^{[s,t]}\MP^{[t,u]},\quad s \leq t \leq u.$$
+
+\noindent Poissonov proces je \emph{homogen}\footnote{Matrica prijelaza ovisi samo o razlici $t-s$.} i \emph{nestacionaran}. Formalno: $\MP^{[s,t]} =: \MP(t-s)$. Vrijedi polugrupno svojstvo:
+$$P(t+s) = \MP^{[0,t+s]}=\MP^{[0,t]}\cdot \MP^{[t,t+s]}=\MP(t)\MP(t+s-t)=\MP(t)\MP(s).$$
+
+\noindent Matrica \emph{gustoća prijelaza} $\A := (a_{ij})$, $a_{ij}:=p_{ij}'(0)$. Za \emph{prijelazne gustoće Poissonovog procesa} vrijedi:
+$$p_{ij}(t)=\frac{\lambda t)^{j-i}}{(j-i)!}\cdot e^{-\lambda t}.$$
+Iz toga i $a_{ij} = p_{ij}'(0)$ dobivamo:
+\begin{align}
+a_{ii} &= -\lambda, \nonumber \\
+a_{i,i+1} &= \lambda, \nonumber \\
+a_{ij} &= 0\quad \text{za}\; j\neq i, i+1. \nonumber
+\end{align}
+
+
+\subsubsection{Izvod}
+$$\MP(t+s)=\MP(t)\MP(s),$$
+za elemente vrijedi:
+$$p_{ij}(t+s) = \sum\limits_k p_{ik}(t)q_{kj}(s).$$
+Označimo $a_{ij}:=p_{ij}'(0)$, te definirajmo matricu $\A := (a_{ij})$. Derivirajmo:
+$$\frac{\partial}{\partial s}p_{ij}(t+s) = \sum\limits_k p_{ik}(t)\frac{\mathrm d}{\mathrm ds}p_{kj}(s).$$
+Za $s=0$:
+$$p_{ij}'(t)=\sum\limits_k p_{ik}(t)p_{kj}'(0)=\sum\limits_k p_{ik}(t)a_{kj}.$$
+Rezultat je matrična jednadžba -- \emph{Kolmogorovljeva jednadžba unaprijed}:
+$$\MP'(t)=\MP(t)\A.$$
+Da smo krenuli s deriviranjem po $t$, dobili bi \emph{Kolmogorovljevu jedbadžbu unazad}:
+$$\MP'(t)=\A\MP(t).$$
 \end{document}
