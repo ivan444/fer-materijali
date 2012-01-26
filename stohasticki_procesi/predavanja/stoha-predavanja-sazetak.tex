@@ -8,7 +8,7 @@
 \usepackage{amssymb}
 %\usepackage{times}
 \usepackage{lmodern}
-\usepackage[a4paper, left=0.5cm, right=0.5cm, bottom=2cm, top=0.5cm]{geometry}
+\usepackage[a4paper, left=0.5cm, right=1.0cm, bottom=2cm, top=0.5cm]{geometry}
 \usepackage{enumerate}
 
 \newcommand{\X}{\mathbf X}
@@ -191,7 +191,7 @@ $\mathbf X_t$ opisuje stanje procesa $\mathbf X$ u trenutku $t$, a $S$ je skup s
 
 Slučajna varijabla je preslikavanje $\mathbf X : \Omega \rightarrow \mathbb R$. Poprima vrijednost $\mathbf X(\omega)$ za svaku realizaciju elementarnog događaja $\omega$.
 
-Trajektorija je funkcija realne verijable $t \mapsto \mathbf X(t,\omega)$ pri čemu je događaj $\omega \in \Omega$ fiksan.
+Trajektorija je funkcija realne varijable $t \mapsto \mathbf X(t,\omega)$ pri čemu je događaj $\omega \in \Omega$ fiksan.
 
 \subsection{Markovljevi procesi}
 $\mathbf X$ je Markovljev proces ako za sve $t_1 < t_2 < \ldots < t_n < t$ vrijedi:
@@ -207,7 +207,7 @@ Za proces $\mathbf X$ kažemo da je proces s nezavisnim prirastima ako su za sve
   \item $\mathbf X$ je stacionaran u \emph{širem} smislu ako vrijedi:
   \begin{enumerate}
     \item očekivanje je konstantno: $m(t) = \text{const}$,
-    \item korelacijska funkcija $R(s,t)$ ovisi samo o razlici vremena $t-s$.
+    \item korelacijska funkcija $R(t,s)$ ovisi samo o razlici vremena $t-s$.
   \end{enumerate}
 \end{itemize}
 
@@ -228,7 +228,7 @@ Za stacionarni proces također vrijedi:
 $$R(t+h,s+h) := \mathbb E\left[\mathbf X_{t+h} \mathbf X_{s+h}\right] = \mathbb E\left[\mathbf X_t \mathbf X_s\right] = R(t,s).$$
 
 \section{Poissonov proces}
-Registrira broj realizacija fogađaja $A$ i trenutke u kojima se događaj zbio.
+Registrira broj realizacija događaja $A$ i trenutke u kojima se događaj zbio.
 $\mathbf N(s,t)$ je slučajna varijabla koja mjeri broj realizacija događaja $A$ u intervalu $[s,t]$.
 
 \begin{description}
@@ -261,7 +261,9 @@ $\mathbf N(s,t)$ je slučajna varijabla koja mjeri broj realizacija događaja $A
   \item[Zbroj Poissonovih procesa.] Zbroj dvaju nezavisnih Poissonovih procesa $\N_1$ i $\N_2$ s parametrima $\lambda_1$ i $\lambda_2$ je Poissonov proces s parametrom $\lambda_1 + \lambda_2$.
 
   \item[Poissonov proces i binomna razdioba.] Ako je $\N$ Poissonov proces te $s<t$, onda vrijedi:
-  $$P(\N_s=k \vertS \N_t=n) = {n \choose k}p^k(1-p)^{n-k},\quad k=0,1,\ldots,n.$$
+  $$P(\N_s=k \vertS \N_t=n) = {n \choose k}p^k(1-p)^{n-k},\quad k=0,1,\ldots,n,$$
+  pri čemu je $p=\lambda_1/\lambda_2$.
+
   
   \item Ako su $\N_1$ i $\N_2$ nezavisni Poissonovi procesi s parametrima $\lambda_1$ i $\lambda_2$, onda je
   $$P(\N_1(t) = k \vertS \N_1(t) + \N_2(t) = n) = {n \choose k}p^k(1-p)^{n-k},$$
@@ -291,7 +293,7 @@ Ako proces $\X$ ima nezavisne priraste, onda je on Markovljev proces.
 \end{description}
 
 \subsection{Chapman-Kolmogorovljeva jednadžba}
-Neka je $\MP^{[s,t]}$ matrica prijelaznih vjerojatnosti Markovljevog procesa. Tada ona zadovoljava Chapman-Kolmogorovljevu jedbadžbu
+Neka je $\MP^{[s,t]}$ matrica prijelaznih vjerojatnosti Markovljevog procesa. Tada ona zadovoljava Chapman-Kolmogorovljevu jednadžbu
 $$\MP^{[s,u]} = \MP^{[s,t]}\MP^{[t,u]},\quad s \leq t \leq u.$$
 
 \noindent Poissonov proces je \emph{homogen}\footnote{Matrica prijelaza ovisi samo o razlici $t-s$.} i \emph{nestacionaran}. Formalno: $\MP^{[s,t]} =: \MP(t-s)$. Vrijedi polugrupno svojstvo:
@@ -317,8 +319,30 @@ Za $s=0$:
 $$p_{ij}'(t)=\sum\limits_k p_{ik}(t)p_{kj}'(0)=\sum\limits_k p_{ik}(t)a_{kj}.$$
 Rezultat je matrična jednadžba -- \emph{Kolmogorovljeva jednadžba unaprijed}:
 $$\MP'(t)=\MP(t)\A.$$
-Da smo krenuli s deriviranjem po $t$, dobili bi \emph{Kolmogorovljevu jedbadžbu unazad}:
+Da smo krenuli s deriviranjem po $t$, dobili bi \emph{Kolmogorovljevu jednadžbu unazad}:
 $$\MP'(t)=\A\MP(t).$$
+
+
+\section{Gaussovi procesi}
+\begin{description}
+  \item[Normalna slučajna varijabla] $\X \sim \mathcal N(m,\sigma^2)$ zadana je funkcijom:
+  $$f(x)=\frac{1}{\sigma\sqrt{2\pi}}\cdot e^{-\frac{(x-m)^2}{2\sigma^2}},$$
+  pri čemu je $m$ očekivanje, a $\sigma^2$ disperzija slučajne varijable $\X$.
+
+  \item[Koeficijent korelacije.] Neka je $(\X,\mathbf Y) \sim \mathcal N(m_1,m_2,\sigma_1^2,\sigma_2^2)$, tada je $r$ koeficijent
+  korelacije varijabli $\X$ i $\mathbf Y$:
+  $$r(\X,\mathbf Y) = \frac{\mathrm{cor}(\X,\mathbf Y)}{\sigma_1 \sigma_2} = \frac{\E(\X \cdot \mathbf Y) - m_1 m_2}{\sqrt{\mathbb D(\X)\mathbb D(\mathbf Y)}}.$$
+
+  \item[Gaussov proces.] Stohastički proces $\X$ je Gaussov ako za sve $t_1 < t_2 < \ldots < t_n$ slučajni vektor
+  $(\X_{t_1},\X_{t_2},\ldots,\X_{t_n})$ ima normalnu razdiobu.
+
+  \item[Brownovo gibanje, Wienerov proces.] $\mathbf W$ je Wienerov proces ako zadovoljava uvjete:
+  \begin{enumerate}
+    \item $\mathbf W(0) = 0$.
+    \item $\mathbf W$ ima nezavisne priraste.
+    \item Prirast $\mathbf W_t - \mathbf W_s$, $s<t$ ima normalnu razdiobu $\mathcal N(\mu(t-s),\sigma^2(t-s))$.
+  \end{enumerate}
+\end{description}
 
 
 \section{Korelacijska teorija stohastičkih procesa}
@@ -328,7 +352,7 @@ $$\MP'(t)=\A\MP(t).$$
   $\hat \X$ je Fourierov transformat.
   \item[Inverz:]
   $$\X(t) = \frac{1}{2\pi}\int\limits_{-\infty}^\infty \hat\X(u)e^{iut}\di u.$$
-  \item $\hat \X$ zahtjeva svojstvo \emph{aposolutne integrabilnosti}.
+  \item $\hat \X$ zahtjeva svojstvo \emph{apsolutne integrabilnosti}.
   \item[Odrezani proces:]
   $$\X_T(t)= \left\{
     \begin{array}{ll}
@@ -386,7 +410,7 @@ $$\MP'(t)=\A\MP(t).$$
 
 %TODO
 % - poisson, dovrši
-% - gaussovi procesi, sve
+% - gaussovi procesi, dovrši
 % - korelacijska, dovrši
 % - procjene i prognoze, sve
 
